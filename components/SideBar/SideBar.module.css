@@ -38,6 +38,10 @@
     justify-content: center;
 }
 
+.container > .wrapper > .sidebarMenu >  .sidebarMenuItem:last-child {
+    padding: 12px 0;
+}
+
 .container > .wrapper > .sidebarMenu > .sidebarMenuItem > .sidebarMenuLink {
     font-size: 1.5rem;
     font-weight: 300;
