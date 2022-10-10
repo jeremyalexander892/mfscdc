@@ -1,9 +1,6 @@
 const withPlugins = require('next-compose-plugins');
-const withVideos = require('next-videos');
 
-module.exports = withPlugins([
-    withVideos
-], {
+module.exports = withPlugins([], {
     webpack(config) {
         config.module.rules.push({
             test: /\.svg$/,
