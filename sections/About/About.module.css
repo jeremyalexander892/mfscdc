@@ -1,0 +1,131 @@
+.container {
+    padding: 0 32px;
+    display: flex;
+    justify-content: center;
+}
+
+.container > .wrapper {
+    max-width: 1200px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.container > .wrapper > .content {
+    display: block;
+}
+
+.container > .wrapper > h2 {
+    font-weight: 400;
+    font-size: 24px;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+.container > .wrapper > h3 {
+    font-weight: 400;
+    font-size: 18px;
+    margin-bottom: 1rem;
+}
+
+.container > .wrapper > .content.contentNoColumns {
+    display: flex;
+    align-items: center;
+    columns: 1;
+}
+
+.container > .wrapper > .contentNoColumns > p,
+.container > .wrapper > .content > p
+{
+    margin-bottom: 1rem;
+    line-height: 25px;
+}
+
+.container > .wrapper > .content {
+    display: flex;
+    align-items: center;
+    columns: 2;
+    gap: 16px;
+}
+
+.container > .wrapper > .content > blockquote {
+    width:100%;
+    font-style:italic;
+    color: #555555;
+    margin: 1.5em;
+    padding: 0.5rem 48px;
+    border-left:8px solid var(--lightBrown) ;
+    line-height:1.6;
+    position: relative;
+    background: #EDEDED;
+}
+
+.container > .wrapper > .content > blockquote:before {
+    content: "\201C";
+    color: var(--blueDark);
+    font-size:4em;
+    position: absolute;
+    left: 10px;
+    top:-10px;
+}
+
+.container > .wrapper > .content > blockquote:after {
+    content: '';
+}
+
+.container > .wrapper > .content > blockquote > cite {
+    display: block;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-style: normal;
+    font-weight: 500;
+}
+
+.container > .wrapper > .content > .imageContainer {
+    min-width: 480px;
+}
+
+.container > .wrapper > .content > .imageContainer img {
+    border-radius: 10px;
+}
+
+.container > .wrapper > .content > .list {
+    columns: 1;
+    gap: 3rem;
+}
+
+.container > .wrapper > .content > .list > li {
+    padding: 0.5rem;
+    list-style-type: square;
+    font-weight: inherit;
+    margin-left: 1rem;
+    line-height: 20px;
+}
+
+@media screen and (max-width: 768px) {
+    .container > .wrapper > .content >.list {
+        columns: 1;
+    }
+    .container > .wrapper > .content > .imageContainer {
+        min-width: 300px;
+        min-height: 300px;
+    }
+}
+
+@media screen and (max-width:480px) {
+    .container > .wrapper > .content {
+        flex-direction: column;
+        columns: 1;
+        gap: 0
+    }
+    .container > .wrapper > .content > .imageContainer {
+        max-width: 480px;
+        max-height: 480px;
+        margin-bottom: 2rem;
+    }
+    .container > .wrapper > .content > blockquote {
+        width: 80%;
+    }
+}

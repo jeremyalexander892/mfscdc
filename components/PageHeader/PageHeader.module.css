@@ -1,0 +1,42 @@
+.pageHeader {
+  text-align: center;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+.pageHeader > .pageTitle {
+  font-size: 24px;
+  font-weight: 400;
+}
+.fancy {
+  line-height: 0.5;
+  text-align: center;
+}
+.fancy span {
+  display: inline-block;
+  position: relative;
+  margin-top: 0.5rem;
+}
+.fancy span:before,
+.fancy span:after {
+  content: "";
+  position: absolute;
+  height: 5px;
+  border-bottom: 1px solid var(--lightBrown);
+  border-top: 1px solid var(--lightBrown);
+  top: 20px;
+  width: 40vw;
+}
+.fancy span:before {
+  right: 100%;
+  margin-right: 15px;
+}
+.fancy span:after {
+  left: 100%;
+  margin-left: 15px;
+}
+.amp {
+  margin: 0 0 0.25em 0;
+}
+.amp span {
+  font-size: 0.7em;
+}

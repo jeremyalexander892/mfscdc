@@ -1,0 +1,86 @@
+.container {
+    padding: 0 32px;
+    display: flex;
+    justify-content: center;
+}
+
+.container > .wrapper {
+    color: black;
+    max-width: 1200px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.container > .wrapper > p {
+    margin-bottom: 1rem;
+}
+
+.container > .wrapper > .content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    width: 100%;
+}
+
+
+.container > .wrapper > .content > .box > div > svg {
+    width: 60px;
+    height: 60px;
+    fill: var(--blueDark);
+}
+
+.container > .wrapper > .content > .box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    border-radius: 10%;
+}
+
+.container > .wrapper > .content > .box > a {
+    color: var(--greenLight);
+    text-decoration: none;
+}
+
+.container > .wrapper > .content > .box > a:hover {
+    color: var(--greenLight);
+}
+
+.container > .wrapper > .content > .box > address {
+    text-decoration: none;
+    font-style: normal;
+    line-height: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-content: center;
+    align-items: center;
+}
+
+.container > .wrapper > .content > .box > * {
+    padding: 0.5rem;
+}
+
+.container > .wrapper > .content > .box.tx {
+    background-color: inherit;
+}
+
+.container > .wrapper > .content > .box.la {
+    background-color: inherit;
+}
+
+
+@media screen and (max-width: 480px) {
+    .container > .wrapper > .content {
+        flex-direction: column;
+        columns: 1;
+        gap: 0
+    }
+    .container > .wrapper > .content > .box {
+        margin-bottom: 1rem;
+    }
+}

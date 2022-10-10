@@ -1,0 +1,147 @@
+.nav {
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    position: fixed;
+    width: 100%;
+    top: 40px;
+    z-index: 10;
+}
+
+.nav .container {
+    display: flex;
+    justify-content: space-between;
+    height: 80px;
+    margin: 0 24px;
+    z-index: 1;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.nav > .container > .logo {
+    color: var(--white);
+    justify-self: flex-start;
+    cursor: pointer;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.nav > .container > .mobileMenuIcon {
+    display: none;
+}
+
+.nav > .container > .navMenu {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    text-align: center;
+}
+
+.nav > .container > .navMenu > .navMenuItem {
+    height: 80px;
+    user-select: none;
+}
+
+.nav > .container > .navMenu > .navMenuItem:first-child > a.active {
+    border-bottom-color: transparent;
+}
+
+.nav > .container > .navMenu > .navMenuItem > .navMenuLink {
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 0 0.8rem;
+    height: 100%;
+    cursor: pointer;
+}
+
+.nav > .container > .navMenu > .navMenuItem > .navMenuLink:hover {
+    color: var(--blueLight);
+}
+
+.nav > .container > .navMenu > .navMenuItem > .navMenuLink.active {
+    border-bottom: 4px solid var(--greenLight);
+    padding-top: 4px;
+}
+
+.nav > .container > .navButton {
+    display: flex;
+    align-items: center;
+}
+
+.nav > .container > .navButton > a {
+    border-right: 50px;
+    background: var(--greenLight);
+    white-space: nowrap;
+    padding: 10px 16px;
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 300;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none;
+}
+
+.nav > .container > .navButton > a:hover {
+    transition: all 0.2s ease-in-out;
+    background: var(--blueLight);
+}
+
+@media screen and (max-width: 1024px) {
+    .nav {
+        padding: 0;
+    }
+    .nav .container {
+        margin: 0 16px;
+    }
+}
+
+@media screen and (max-width: 960px) {
+    .nav {
+        transition: 0.8s all ease;
+    }
+    .nav .container {
+        margin: 0 16px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .nav {
+        padding: 0;
+    }
+    .nav .container > .mobileMenuIcon {
+        display: block;
+        position: absolute;
+        top: 0;
+        right: 0;
+        transform: translate(-60%, 80%);
+        font-size: 1.8rem;
+        cursor: pointer;
+        color:var(--white);
+    }
+    .nav > .container > .navMenu {
+        display: none;
+    }
+    .nav > .container > .navButton {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .nav {
+        background: linear-gradient(180deg,#006da0 0,#2a3990 100%);
+        background: white;
+        padding: 0;
+    }
+}
+

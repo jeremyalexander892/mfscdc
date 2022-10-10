@@ -1,0 +1,29 @@
+{
+  "name": "mfs-cdc",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "animate.css": "^4.1.1",
+    "clsx": "^1.2.1",
+    "framer-motion": "^7.5.1",
+    "jump.js": "^1.0.2",
+    "next": "12.3.1",
+    "next-videos": "^1.5.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-icons": "^4.4.0",
+    "react-player": "^2.11.0",
+    "react-stateface": "^2.0.0",
+    "typewriter-effect": "^2.19.0"
+  },
+  "devDependencies": {
+    "@svgr/webpack": "^6.4.0",
+    "next-compose-plugins": "^2.2.1"
+  }
+}

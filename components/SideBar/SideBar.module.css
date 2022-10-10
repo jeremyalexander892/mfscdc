@@ -1,0 +1,85 @@
+.container {
+    position: fixed;
+    z-index: 999;
+    width: 100%;
+    height: 100%;
+    background: var(--blueDark);
+    display: grid;
+    align-items: center;
+    left: 0;
+    transition: 0.3s ease-in-out;
+}
+
+.container > .iconWrapper {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.5rem;
+    font-size: 2rem;
+    cursor: pointer;
+    outline: none;
+}
+
+.container > .wrapper {
+    color: var(--white);
+}
+
+.container > .wrapper > .sidebarMenu {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(5, 80px);
+    text-align: center;
+}
+
+.container > .wrapper > .sidebarMenu >  .sidebarMenuItem {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container > .wrapper > .sidebarMenu > .sidebarMenuItem > .sidebarMenuLink {
+    font-size: 1.5rem;
+    font-weight: 300;
+    text-decoration: none;
+    transition: 0.2s ease-in-out;
+    color: #FFF;
+}
+
+.container > .wrapper > .sidebarMenu > .sidebarMenuItem > .sidebarMenuLink:hover {
+    color: var(--blueLight);
+    transition: 0.2s ease-in-out;
+}
+
+.container > .wrapper > .sidebarButtonWrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+}
+
+.container > .wrapper > .sidebarButtonWrapper > button {
+    background: var(--greenLight);
+    white-space: nowrap;
+    padding: 16px 64px;
+    color: var(--white);
+    font-size: 16px;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none;
+}
+
+.container > .wrapper > .sidebarButtonWrapper > button:hover {
+    transition: all 0.2s ease-in-out;
+    background: var(--blueLight);
+}
+
+@media screen and (max-width: 480px) {
+    .container > .wrapper > .sidebarMenu {
+        grid-template-rows: repeat(5, 60px);
+    }
+    .container > .wrapper > .sidebarButtonWrapper > button {
+        padding: 12px 30px;
+    }
+}

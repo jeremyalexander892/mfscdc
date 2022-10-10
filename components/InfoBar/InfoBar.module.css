@@ -1,0 +1,91 @@
+.container {
+    align-items: center;
+    background: linear-gradient(0deg,#74a631 0%,#8cc63f 100%);
+    color: #FFF;
+    display: flex;
+    font-size: 16px;
+    height: 40px;
+    justify-content: center;
+    line-height: 24px;
+    position: fixed;
+    overflow: hidden;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    z-index: 3;
+    padding: 0 32px;
+}
+
+.container > .wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.container > .wrapper > .box {
+    display: flex;
+    align-items: center;
+}
+
+.container > .wrapper > .box > .link {
+    color: #FFF;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.container > .wrapper > .box > .link:hover {
+    color: #0B457F;
+}
+
+.container > .wrapper > .box > .icon {
+    color: #FFF;
+}
+
+.container > .wrapper > .box > .icon:hover {
+    color: #0B457F;
+    transition: transform 0.5s ease-out;
+    transform: rotateZ(360deg);
+}
+
+.container > .wrapper > .box > .icon.phone,
+.container > .wrapper > .box > .icon.email,
+.container > .wrapper > .box > .icon.time {
+    margin-right: 0.5rem;
+}
+
+.container > .wrapper > .box > span.state {
+    margin-right: 0.5rem;
+}
+
+.container > .wrapper > .box > .icon.instagram {
+    margin-left: 0.5rem;
+}
+
+@media screen and (max-width: 768px) {
+    .container > .wrapper > .box:nth-child(2),
+    .container > .wrapper > .box:nth-child(3),
+    .container > .wrapper > .box:nth-child(4) {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 540px) {
+    .container {
+        padding: 0;
+    }
+    .container > .wrapper > .box:first-child {
+        margin-left: 16px;
+    }
+    .container > .wrapper > .box:last-child {
+        margin-right: 16px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .container {
+       width: 100%;
+    }
+}
+

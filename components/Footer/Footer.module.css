@@ -1,0 +1,28 @@
+.container {
+    height: 100px;
+    margin-top: 1rem;
+    padding: 0 32px;
+}
+
+.container > .wrapper {
+    width: 100%;
+    height: 100%;
+}
+
+.container > .wrapper > div {
+    border-top: 1px solid lightgray;
+    width: 100%;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+@media screen and (max-width: 480px) {
+    .container {
+        margin-top: 0.5rem;
+    }
+    .container > .wrapper > div > span {
+      font-size: small;
+    }
+}

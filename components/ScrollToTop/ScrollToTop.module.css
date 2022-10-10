@@ -1,0 +1,49 @@
+.container {
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: row;
+    z-index: 998;
+    position: fixed;
+    right: 0;
+    bottom: 24px;
+    cursor: pointer;
+    transform: none;
+    transition: transform 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    width: 100%;
+    padding-right: 32px;
+}
+
+.container > .wrapper {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.container > .wrapper > .button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    font-size: 0.875rem;
+    min-width: 0;
+    box-sizing: border-box;
+    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    font-weight: 500;
+    line-height: 1.75;
+    border-radius: 50%;
+    letter-spacing: 0.02857em;
+    text-transform: uppercase;
+    background-color: var(--blueDark);
+    outline: none;
+    border: none;
+}
+
+.container > .wrapper > .button > .icon {
+    color: var(--white);
+    font-size: 24px;
+}
+
+.container > .wrapper > .button > .icon:hover {
+    transform: scale(1.4);
+}
