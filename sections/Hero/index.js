@@ -1,5 +1,5 @@
 import styles from './Hero.module.css'
-import {useState} from "react"
+import {useEffect, useState} from "react"
 import clsx from "clsx"
 import jump from "jump.js"
 import Image from 'next/image'
@@ -7,17 +7,38 @@ import Typewriter from 'typewriter-effect'
 
 
 const Hero = () => {
+    const images = ['/images/CCCteam.jpeg', '/images/mfs-team.jpeg']
+    const [imgSrc, setImgSrc] = useState('/images/CCCteam.jpeg')
+    const [currentIndex, setCurrentIndex] = useState(0)
     const [showHeroButton, setShowHeroButton] = useState(false)
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            let index = (Math.random() >= 0.5) ? 1 : 0;
+            if (currentIndex === index && index === 0) {
+                index = 1;
+            } else {
+                index = 0;
+            }
+            setCurrentIndex(index);
+            setImgSrc(images[index]);
+        }, 10000);
+        return () => {
+            clearInterval(interval);
+        };
+    }, [])
+
     const jumpTo = (target) => {
         jump(target, {
             duration: 1000,
         });
     }
+
     return (
         <section id="home" className={styles.container}>
             <div className={styles.imgWrapper}>
                 <Image
-                    src="/images/CCCteam.jpeg"
+                    src={imgSrc}
                     layout="fill"
                     objectFit="cover"
                 />
