@@ -1,5 +1,5 @@
 {
-  "name": "mfs-cdc",
+  "name": "mfscdc",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -25,5 +25,8 @@
   "devDependencies": {
     "@svgr/webpack": "^6.4.0",
     "next-compose-plugins": "^2.2.1"
-  }
+  },
+  "main": "index.js",
+  "author": "avernon2 <avant.vernon@gmail.com>",
+  "license": "MIT"
 }
