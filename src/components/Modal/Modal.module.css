@@ -1,6 +1,8 @@
-.modal-wrapper {
-    width: 500px;
-    height: 600px;
+.modalWrapper {
+    width: 800px;
+    height: 1140px;
+    z-index: 99999;
+    margin-top: 1700px;
 }
 
 .modal {
@@ -11,7 +13,7 @@
     padding: 15px;
 }
 
-.modal-overlay {
+.modalOverlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -23,12 +25,18 @@
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-.modal-body {
+.modalBody {
     padding-top: 10px;
 }
 
-.modal-header {
+.modalHeader {
     display: flex;
     justify-content: flex-end;
     font-size: 25px;
+}
+
+.modalHeader a {
+    text-decoration: none;
+    font-weight: bold;
+    color: red;
 }

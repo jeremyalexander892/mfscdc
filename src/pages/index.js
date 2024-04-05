@@ -8,6 +8,7 @@ import Media from "../sections/Media";
 import Contact from "../sections/Contact";
 import Modal from "../components/Modal";
 import ScrollToTop from "../components/ScrollToTop";
+import Image from "next/image";
 
 
 export default function Home() {
@@ -28,7 +29,13 @@ export default function Home() {
             <Contact />
             {showModal &&
                 <Modal onClose={() => setShowModal(false)}>
-                    Test
+                    <Image
+                        alt="MFS CDC"
+                        src={imgSrc}
+                        priority={true}
+                        width={795}
+                        height={1105}
+                    />
                 </Modal>
             }
             <ScrollToTop />
