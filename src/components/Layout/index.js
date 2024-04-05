@@ -1,10 +1,11 @@
 import {motion} from "framer-motion"
 import styles from "./Layout.module.css"
 import clsx from "clsx"
-import InfoBar from "@components/InfoBar"
-import Footer from "@components/Footer"
-import NavBar from "@components/NavBar"
-import SideBar from "@components/SideBar";
+import InfoBar from "../InfoBar";
+import SideBar from "../SideBar";
+import NavBar from "../NavBar";
+import Footer from "../Footer";
+
 
 const Layout = ({children, className, isOpen, toggle,}) => {
     return  (

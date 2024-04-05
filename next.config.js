@@ -8,7 +8,4 @@ module.exports = withPlugins([], {
         });
         return config;
     },
-    future: {
-        webpack5: true
-    },
 })

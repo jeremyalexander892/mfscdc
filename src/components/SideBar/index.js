@@ -23,32 +23,32 @@ const SideBar = ({isOpen, toggle}) => {
             <div className={styles.wrapper}>
                 <ul className={styles.sidebarMenu}>
                     <li className={styles.sidebarMenuItem}>
-                        <Link href="#home">
+                        <Link href="#home" legacyBehavior>
                             <a className={styles.sidebarMenuLink}>Home</a>
                         </Link>
                     </li>
                     <li className={styles.sidebarMenuItem}>
-                        <Link href="#about">
+                        <Link href="#about" legacyBehavior>
                             <a className={styles.sidebarMenuLink}>About</a>
                         </Link>
                     </li>
                     <li className={styles.sidebarMenuItem}>
-                        <Link href="#benefits">
+                        <Link href="#benefits" legacyBehavior>
                             <a className={styles.sidebarMenuLink}>Benefits</a>
                         </Link>
                     </li>
                     <li className={styles.sidebarMenuItem}>
-                        <Link href="#resources">
+                        <Link href="#resources" legacyBehavior>
                             <a className={styles.sidebarMenuLink}>Resources</a>
                         </Link>
                     </li>
                     <li className={styles.sidebarMenuItem}>
-                        <Link href="#media">
+                        <Link href="#media" legacyBehavior>
                             <a className={styles.sidebarMenuLink}>Media</a>
                         </Link>
                     </li>
                     <li className={styles.sidebarMenuItem}>
-                        <Link href="#contact">
+                        <Link href="#contact" legacyBehavior>
                             <a className={styles.sidebarMenuLink}>Service Areas</a>
                         </Link>
                     </li>

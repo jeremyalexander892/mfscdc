@@ -1,6 +1,6 @@
 import styles from './PageHeader.module.css'
 import clsx from "clsx"
-import Tooth from "../../public/images/mfs-smiles-icon.svg"
+import Tooth from "../../../public/images/mfs-smiles-icon.svg"
 
 const PageHeader = ({headerTitle}) => {
     return (

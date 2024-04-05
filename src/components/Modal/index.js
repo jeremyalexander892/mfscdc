@@ -1,0 +1,58 @@
+import React, {useCallback, useEffect, useRef, useState} from "react";
+import ReactDOM from "react-dom";
+import './Modal.module.css';
+
+const Modal = ({ onClose, children, title }) => {
+    const [portalRoot, setPortalRoot] = useState(null);
+    const modalWrapperRef = useRef();
+
+    const backDropHandler = useCallback(e => {
+        if (!modalWrapperRef?.current?.contains(e.target)) {
+            onClose();
+        }
+    }, []);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setPortalRoot(document.getElementById('modal-root'));
+        })
+        setTimeout(() => {
+            window.addEventListener('click', backDropHandler);
+        })
+    }, [])
+
+    useEffect(() => {
+        return () => window.removeEventListener('click', backDropHandler);
+    }, []);
+
+    const handleCloseClick = (e) => {
+        e.preventDefault();
+        onClose();
+    };
+
+    const modalContent = (
+        <div className="modal-overlay">
+            <div ref={modalWrapperRef} className="modal-wrapper">
+                <div className="modal">
+                    <div className="modal-header">
+                        <a href="#" onClick={handleCloseClick}>
+                            x
+                        </a>
+                    </div>
+                    {title && <h1>{title}</h1>}
+                    <div className="modal-body">{children}</div>
+                </div>
+            </div>
+        </div>
+    );
+
+    if (!portalRoot) return null;
+
+
+    return ReactDOM.createPortal(
+        modalContent,
+        portalRoot
+    );
+};
+
+export default Modal

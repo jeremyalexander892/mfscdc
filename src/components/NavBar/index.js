@@ -2,8 +2,8 @@ import styles from './NavBar.module.css'
 import {useEffect, useState} from "react"
 import {MdMenu} from "react-icons/md"
 import jump from 'jump.js'
-import Logo from "../../public/images/mfs_full_logo_white.png"
-import Image from 'next/image'
+import Logo from "../../../public/images/mfs_full_logo_white.png"
+import Image from "next/legacy/image";
 
 const NavBar = ({toggle}) => {
     const [scrollNav, setScrollNav] = useState(false);
@@ -33,7 +33,7 @@ const NavBar = ({toggle}) => {
             <div className={styles.container}>
                 <div onClick={() => jumpTo('#home')} className={styles.logo}>
                     <a>
-                        <Image layout="fixed" src={Logo} width={309} height={58} />
+                        <Image alt="MFS CDC" layout="fixed" src={Logo} width={309} height={58} />
                     </a>
                 </div>
                 <div className={styles.mobileMenuIcon} onClick={toggle}>

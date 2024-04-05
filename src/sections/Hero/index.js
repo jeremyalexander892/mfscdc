@@ -38,9 +38,11 @@ const Hero = () => {
         <section id="home" className={styles.container}>
             <div className={styles.imgWrapper}>
                 <Image
+                    alt="MFS CDC"
                     src={imgSrc}
-                    layout="fill"
-                    objectFit="cover"
+                    fill
+                    style={{objectFit:"cover"}}
+                    priority={true}
                 />
             </div>
             <div className={styles.content}>

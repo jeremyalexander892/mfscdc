@@ -1,6 +1,6 @@
 import styles from './Resources.module.css'
 import clsx from "clsx"
-import PageHeader from "@components/PageHeader";
+import PageHeader from "../../components/PageHeader"
 
 const Resources = () => {
     return (

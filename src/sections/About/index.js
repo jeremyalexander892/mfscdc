@@ -1,7 +1,7 @@
-import styles from "@sections/About/About.module.css"
-import PageHeader from "@components/PageHeader"
+import styles from './About.module.css'
 import Image from 'next/image'
 import clsx from "clsx"
+import PageHeader from "../../components/PageHeader"
 
 const About = () => {
     return(
@@ -21,7 +21,7 @@ const About = () => {
                         <Image
                             src="/images/treatment.jpeg"
                             alt="Patient Treatment"
-                            objectFit="contain"
+                            style={{objectFit:"contain"}}
                             width={480}
                             height={480}
                         />
