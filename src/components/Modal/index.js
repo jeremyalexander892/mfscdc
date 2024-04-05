@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import ReactDOM from "react-dom";
-import './Modal.module.css';
+import styles from './Modal.module.css';
 
 const Modal = ({ onClose, children, title }) => {
     const [portalRoot, setPortalRoot] = useState(null);
@@ -31,16 +31,16 @@ const Modal = ({ onClose, children, title }) => {
     };
 
     const modalContent = (
-        <div className="modal-overlay">
-            <div ref={modalWrapperRef} className="modal-wrapper">
-                <div className="modal">
-                    <div className="modal-header">
+        <div className={styles.modalOverlay}>
+            <div ref={modalWrapperRef} className={styles.modalWrapper}>
+                <div className={styles.modal}>
+                    <div className={styles.modalHeader}>
                         <a href="#" onClick={handleCloseClick}>
                             x
                         </a>
                     </div>
                     {title && <h1>{title}</h1>}
-                    <div className="modal-body">{children}</div>
+                    <div className={styles.modalBody}>{children}</div>
                 </div>
             </div>
         </div>
