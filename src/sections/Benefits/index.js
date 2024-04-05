@@ -1,7 +1,7 @@
 import styles from './Benefits.module.css'
 import clsx from "clsx"
 import Image from 'next/image'
-import PageHeader from "@components/PageHeader"
+import PageHeader from "../../components/PageHeader"
 
 const Benefits = () => {
     return (
@@ -38,7 +38,7 @@ const Benefits = () => {
                         <Image
                             src="/images/patientflow.jpeg"
                             alt="Secure Patient Flow"
-                            objectFit="contain"
+                            style={{objectFit:"contain"}}
                             width={480}
                             height={480}
                         />

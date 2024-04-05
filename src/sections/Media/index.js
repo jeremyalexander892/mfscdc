@@ -2,7 +2,7 @@ import styles from './Media.module.css'
 import {useEffect, useState, useRef} from 'react'
 import ReactPlayer from 'react-player'
 import clsx from "clsx"
-import PageHeader from "@components/PageHeader"
+import PageHeader from "../../components/PageHeader"
 
 
 const Media = () => {

@@ -1,9 +1,9 @@
 import styles from "./Contact.module.css"
-import PageHeader from "@components/PageHeader"
 import clsx from "clsx"
 import { State } from 'react-stateface'
 import {AiOutlinePhone} from 'react-icons/ai'
 import {MdOutlineLocationOn} from 'react-icons/md'
+import PageHeader from "../../components/PageHeader"
 
 const Contact = () => {
 
