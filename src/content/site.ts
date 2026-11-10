@@ -20,7 +20,7 @@ export const SITE = {
   legalName: "Miles For Smiles LLC",
   tagline: "Mobile dental care for correctional facilities",
   description:
-    "Miles For Smiles brings a self-contained mobile dental clinic inside correctional facilities in Louisiana and Texas. No transport, no added security risk, comprehensive care on site.",
+    "On-site mobile dental care for correctional facilities in Louisiana and Texas. No inmate transport, no added security risk, full care inside your facility.",
   url: "https://www.mfscdc.com",
   email: "doc@milesforsmiles.com",
   emailHref: "mailto:doc@milesforsmiles.com?subject=Facility%20consultation",
