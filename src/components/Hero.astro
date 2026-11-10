@@ -16,6 +16,7 @@ import heroImage from "../assets/images/team-unit.jpeg";
     class="hero-media"
   />
   <div class="hero-scrim" aria-hidden="true"></div>
+  <div class="hero-masthead" aria-hidden="true"></div>
 
   <div class="container hero-content">
     <p class="eyebrow hero-eyebrow">
@@ -97,6 +98,17 @@ import heroImage from "../assets/images/team-unit.jpeg";
         rgb(7 46 110 / 0.12) 100%
       );
     }
+  }
+
+  /* Seats the transparent header: the photo's top edge is bright (the van),
+     so the nav links get a navy band behind them, as on golfingforsmiles. */
+  .hero-masthead {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: 0;
+    block-size: 10rem;
+    z-index: -1;
+    background: linear-gradient(180deg, rgb(4 22 80 / 0.8) 0%, rgb(4 22 80 / 0) 100%);
   }
 
   .hero-content {
@@ -191,8 +203,8 @@ import heroImage from "../assets/images/team-unit.jpeg";
       }
 
       /* Separate rules so the minifier cannot fold the timeline into the shorthand. */
-      :where(html) .hero > :global(picture),
-      :where(html) .hero-content {
+      :global(:where(html)) .hero > :global(picture),
+      :global(:where(html)) .hero-content {
         animation-timeline: scroll(root);
         animation-range: 0 100svh;
       }

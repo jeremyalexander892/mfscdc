@@ -139,7 +139,7 @@ import { NAV, OFFICES } from "../content/site";
     }
 
     /* Separate rule so the minifier cannot fold the timeline into the shorthand. */
-    :where(html) .site-header {
+    :global(:where(html)) .site-header {
       animation-timeline: scroll(root);
       animation-range: 0 120px;
     }

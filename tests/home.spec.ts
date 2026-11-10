@@ -133,6 +133,29 @@ test.describe("motion", () => {
     await expect(target).toHaveCSS("opacity", "1");
   });
 
+  test("hero copy is fully visible at the top of the page", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.goto("/");
+    await page.waitForTimeout(1200); // let the entrance animation settle
+    await expect(page.locator(".hero-content")).toHaveCSS("opacity", "1");
+    await expect(page.locator(".hero-title")).toHaveCSS("opacity", "1");
+  });
+
+  test("scroll-linked effects follow the scroll position", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.goto("/");
+    const supported = await page.evaluate(() => CSS.supports("animation-timeline: scroll()"));
+    test.skip(!supported, "Browser has no scroll-driven animations; static fallback applies");
+
+    const header = page.locator(".site-header");
+    await expect(header).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+    await page.evaluate(() => {
+      document.documentElement.style.scrollBehavior = "auto";
+      window.scrollTo(0, 400);
+    });
+    await expect(header).not.toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+  });
+
   test("shows everything immediately with reduced motion", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/");
