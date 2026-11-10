@@ -1,5 +1,11 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+const HD_VIDEO = "/video/miles-for-smiles.mp4";
+const SD_VIDEO = "/video/miles-for-smiles-720p.mp4";
+// Mirrors the component: 1080p from 80rem (1280px) wide, 720p below that.
+const expectedVideoSrc = (page: Page) =>
+  (page.viewportSize()?.width ?? 0) >= 1280 ? HD_VIDEO : SD_VIDEO;
 
 test.describe("home page", () => {
   test.beforeEach(async ({ page }) => {
@@ -103,7 +109,7 @@ test.describe("home page", () => {
 
     await expect(root).toHaveAttribute("data-state", "playing");
     const video = page.locator("video.player");
-    await expect(video.locator("source")).toHaveAttribute("src", "/video/miles-for-smiles.mp4");
+    await expect(video.locator("source")).toHaveAttribute("src", expectedVideoSrc(page));
     await expect(video).toHaveJSProperty("controls", true);
     await expect
       .poll(() => video.evaluate((v: HTMLVideoElement) => v.currentTime))
@@ -128,8 +134,27 @@ test.describe("home page", () => {
       .toBeGreaterThan(0);
   });
 
+  test("hovering the play button warms up the video without playing it", async ({ page }) => {
+    const videoRequests: string[] = [];
+    page.on("request", (req) => {
+      if (req.url().endsWith(".mp4")) videoRequests.push(new URL(req.url()).pathname);
+    });
+    await page.locator("#about").scrollIntoViewIfNeeded();
+    await page.getByRole("button", { name: /Play video/ }).hover();
+
+    const video = page.locator("video.player");
+    await expect(video).toHaveCount(1);
+    await expect.poll(() => videoRequests).toContain(expectedVideoSrc(page));
+    expect(videoRequests).not.toContain(expectedVideoSrc(page) === HD_VIDEO ? SD_VIDEO : HD_VIDEO);
+    // Still behind the poster: not playing, not focusable, no state change.
+    await expect(video).toHaveJSProperty("paused", true);
+    await expect(video).toHaveJSProperty("inert", true);
+    await expect(page.locator(".video")).not.toHaveAttribute("data-state", /.+/);
+    await expect(page.getByRole("button", { name: /Play video/ })).toBeVisible();
+  });
+
   test("video failure shows an error and a download link", async ({ page }) => {
-    await page.route("**/video/miles-for-smiles.mp4", (route) => route.fulfill({ status: 404 }));
+    await page.route("**/video/*.mp4", (route) => route.fulfill({ status: 404 }));
     await page.locator("#about").scrollIntoViewIfNeeded();
     const button = page.getByRole("button", { name: /Play video/ });
     await button.click();

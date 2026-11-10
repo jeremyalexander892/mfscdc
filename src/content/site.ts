@@ -30,9 +30,11 @@ export const SITE = {
     opens: "08:00",
     closes: "16:00",
   },
-  // Self-hosted from public/video: H.264/AAC MP4 (faststart) plus English WebVTT captions.
+  // Self-hosted from public/video: H.264/AAC MP4s (faststart) plus English WebVTT captions.
+  // 1080p (~2.5 Mbps) for wide screens and the download; 720p (~1 Mbps) for everyone else.
   video: {
     src: "/video/miles-for-smiles.mp4",
+    srcSd: "/video/miles-for-smiles-720p.mp4",
     captions: "/video/miles-for-smiles.en.vtt",
     sizeLabel: "MP4, 39 MB",
   },

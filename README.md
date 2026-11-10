@@ -95,11 +95,14 @@ for body text, and **Yellowtail** for at most one script word per view.
 - **Scroll effects in CSS only.** The header turns solid and sections reveal using scroll-driven
   animations. Browsers without support, such as Firefox, get the static version. Visitors who
   prefer reduced motion get no motion.
-- **Self-hosted, click-to-load video.** `public/video/` holds an H.264/AAC MP4 (metadata at the
-  front, so it starts playing while it downloads) and optional English WebVTT captions, which
-  viewers turn on from the player's CC control.
-  Nothing is requested until a visitor presses play. If the file can't play, the player shows an
-  error and a download link. The video's URL and size label live in `src/content/site.ts`.
+- **Self-hosted, click-to-load video.** `public/video/` holds two H.264/AAC MP4s (metadata at the
+  front, so they start playing while they download) and optional English WebVTT captions, which
+  viewers turn on from the player's CC control. Screens 1280px and wider on a good connection get
+  1080p (~2.5 Mbps); everyone else, including visitors with Data Saver on or a 2G/3G connection,
+  gets 720p (~1 Mbps, smoothed so playback doesn't stall). Nothing is requested on page load.
+  Hovering or focusing the play button fetches just the start of the file so playback begins
+  almost at once (skipped with Data Saver). If the file can't play, the player shows an error and
+  a download link. The video's URLs and size label live in `src/content/site.ts`.
 - **Images.** Responsive AVIF and WebP with fixed dimensions, so the layout doesn't shift as the
   page loads. The hero photo loads with high priority.
 - **Security.** A Content Security Policy is generated at build time. Astro hashes every inline

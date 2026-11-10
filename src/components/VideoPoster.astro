@@ -4,8 +4,10 @@ import { Play } from "@lucide/astro";
 import poster from "../assets/images/team-portrait.jpeg";
 
 interface Props {
-  /** Same-origin MP4 (H.264/AAC, faststart). */
+  /** Same-origin 1080p MP4 (H.264/AAC, faststart) for wide screens; also the download. */
   src: string;
+  /** Same-origin 720p MP4 for phones, tablets, laptops and constrained connections. */
+  srcSd: string;
   /** Same-origin English WebVTT captions. */
   captions: string;
   /** Shown on the download link, e.g. "MP4, 39 MB". */
@@ -13,12 +15,13 @@ interface Props {
   title: string;
 }
 
-const { src, captions, sizeLabel, title } = Astro.props;
+const { src, srcSd, captions, sizeLabel, title } = Astro.props;
 ---
 
 <div
   class="video"
   data-video-src={src}
+  data-video-src-sd={srcSd}
   data-video-captions={captions}
   data-video-title={title}
   data-reveal
@@ -47,65 +50,102 @@ const { src, captions, sizeLabel, title } = Astro.props;
 </div>
 
 <script>
-  // Click-to-load: the ~39 MB MP4 is only requested once a visitor asks for it,
-  // so the page itself stays as light as before.
+  // Nothing is requested on page load. Hovering or focusing the play button warms up the start
+  // of the file (unless the visitor asked to save data); clicking plays it.
+  // Network Information API: Chromium only. Elsewhere these checks are simply skipped.
+  type Connection = { saveData?: boolean; effectiveType?: string };
+  const connection = (navigator as Navigator & { connection?: Connection }).connection;
+  const saveData = connection?.saveData === true;
+  const slowNetwork = ["slow-2g", "2g", "3g"].includes(connection?.effectiveType ?? "");
+  // The inline player is at most ~34rem wide, so 720p is sharp there; 1080p only pays off on
+  // wide screens with a good connection (e.g. fullscreen on a desktop).
+  const WIDE_SCREEN = "(min-width: 80rem)";
+
   document.querySelectorAll<HTMLElement>(".video[data-video-src]").forEach((root) => {
     const button = root.querySelector<HTMLButtonElement>(".poster");
-    const { videoSrc, videoCaptions, videoTitle } = root.dataset;
+    const { videoSrc, videoSrcSd, videoCaptions, videoTitle } = root.dataset;
     if (!button || !videoSrc) return;
+    let video: HTMLVideoElement | null = null;
 
-    const reveal = (video: HTMLVideoElement) => {
+    const pickSource = () => {
+      const wantsHd = matchMedia(WIDE_SCREEN).matches && !saveData && !slowNetwork;
+      return wantsHd || !videoSrcSd ? videoSrc : videoSrcSd;
+    };
+
+    const reveal = (player: HTMLVideoElement) => {
       if (root.dataset["state"] === "playing") return;
       root.dataset["state"] = "playing";
+      player.inert = false;
       button.remove();
-      video.focus();
+      player.focus();
     };
 
     const fail = () => {
       root.dataset["state"] = "error";
-      root.querySelector("video.player")?.remove();
+      video?.remove();
       button.removeAttribute("aria-busy");
       button.disabled = true;
     };
+
+    const addCaptions = (player: HTMLVideoElement, src: string) => {
+      const track = document.createElement("track");
+      track.kind = "captions";
+      track.srclang = "en";
+      track.label = "English";
+      track.src = src;
+      // Off by default: viewers turn captions on from the player's CC control. Browsers that
+      // honor a system-wide captions preference (e.g. Safari) still switch them on automatically.
+      player.append(track);
+    };
+
+    // Builds the player once, hidden under the poster and inert (no tab stop, not announced)
+    // until it actually plays.
+    const ensureVideo = (preload: "metadata" | "auto") => {
+      if (video) {
+        video.preload = preload;
+        return video;
+      }
+      const player = document.createElement("video");
+      player.className = "player";
+      player.controls = true;
+      player.playsInline = true;
+      player.preload = preload;
+      player.inert = true;
+      player.setAttribute("aria-label", videoTitle ?? "Video");
+
+      const source = document.createElement("source");
+      source.src = pickSource();
+      source.type = "video/mp4";
+      // A failed <source> fires "error" on the source element, not the video.
+      source.addEventListener("error", fail);
+      player.append(source);
+      if (videoCaptions) addCaptions(player, videoCaptions);
+
+      player.addEventListener("playing", () => reveal(player), { once: true });
+      root.prepend(player);
+      video = player;
+      return player;
+    };
+
+    // Intent to play: fetch just the index and first frames so the click starts almost at once.
+    const warmUp = () => {
+      if (saveData || root.dataset["state"]) return;
+      ensureVideo("metadata");
+    };
+    button.addEventListener("pointerenter", warmUp, { once: true });
+    button.addEventListener("focus", warmUp, { once: true });
 
     button.addEventListener(
       "click",
       () => {
         root.dataset["state"] = "loading";
         button.setAttribute("aria-busy", "true");
-
-        const video = document.createElement("video");
-        video.className = "player";
-        video.controls = true;
-        video.playsInline = true;
-        video.preload = "auto";
-        video.setAttribute("aria-label", videoTitle ?? "Video");
-
-        const source = document.createElement("source");
-        source.src = videoSrc;
-        source.type = "video/mp4";
-        // A failed <source> fires "error" on the source element, not the video.
-        source.addEventListener("error", fail);
-        video.append(source);
-
-        if (videoCaptions) {
-          const track = document.createElement("track");
-          track.kind = "captions";
-          track.srclang = "en";
-          track.label = "English";
-          track.src = videoCaptions;
-          // Off by default: viewers turn captions on from the player's CC control. Browsers that
-          // honor a system-wide captions preference (e.g. Safari) still switch them on automatically.
-          video.append(track);
-        }
-
-        video.addEventListener("playing", () => reveal(video), { once: true });
-        root.prepend(video);
+        const player = ensureVideo("auto");
         // The click is a user gesture, so playback with sound is allowed. If the browser still
         // refuses (e.g. iOS Low Power Mode), show the player so its own controls can start it.
-        video.play().catch((err: unknown) => {
+        player.play().catch((err: unknown) => {
           const blocked = err instanceof DOMException && err.name === "NotAllowedError";
-          if (blocked) reveal(video);
+          if (blocked) reveal(player);
           else fail();
         });
       },
