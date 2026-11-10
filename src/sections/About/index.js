@@ -1,5 +1,4 @@
 import styles from './About.module.css'
-import Image from 'next/image'
 import clsx from "clsx"
 import PageHeader from "../../components/PageHeader"
 
@@ -11,38 +10,7 @@ const About = () => {
                 <div className={clsx(styles.contentNoColumns)}>
                     <p>Oral health is very important, and <strong>Miles For Smiles</strong> is committed to providing quality dental care to the entire community.</p>
                     <p>A healthy mouth, teeth, and gums have a positive effect on your wellness. <strong>Miles For Smiles</strong> is a sterile self-contained dental facility that utilizes essential staff to service treatment needs on-site. During scheduled treatment days at facilities, a member of our team interacts with officials and staff throughout the treatment day.</p>
-                    <p>Our employees always wear masks, and our mobile is equipped with external vents to remove potentially contaminated air. As society adjusts to the COVID-19 virus, it is paramount that we keep ourselves as healthy as possible.</p>
-                    <p><strong>Miles For Smiles</strong> is dedicated to providing the cleanest and safest environment to protect visitors, patients, and staff. The atmosphere has changed since many patients last visited our office, but safety continues to be a top priority.</p>
-                </div>
-                <h2>Protect Yourself From Covid-19</h2>
-                <h3><strong>Miles For Smiles</strong> has added the following precautions to minimize potential exposure to COVID-19.</h3>
-                <div className={styles.content}>
-                    <div className={styles.imageContainer}>
-                        <Image
-                            src="/images/treatment.jpeg"
-                            alt="Patient Treatment"
-                            style={{objectFit:"contain"}}
-                            width={480}
-                            height={480}
-                        />
-                    </div>
-                    <ul className={styles.list}>
-                        <li>Seating level HEPA air filtration systems with UV lights.</li>
-                        <li>Limiting potential exposure to COVID-19 by implementing a 14-day quarantine protocol. </li>
-                        <li>Mandatory pre-work day temperatures reading, which is logged every day for each employee. A quarantine protocol for employees showing a fever higher than 99.5, which does not allow them at the office until further testing is completed.</li>
-                        <li>Mandatory temperature checks for all patients before entering our mobile facility. For patients with a temperature above 99.5 appointments will be rescheduled.</li>
-                        <li>Readily available hand sanitizer for all employees and patients.</li>
-                        <li>CaviCide disinfected treatment rooms for all student services.</li>
-                        <li>Aerosol sprayed disinfectants to help reduce airborne viruses. • Upgraded PPEs, including masks, gloves, gowns, face shields, and more.</li>
-                        <li>Professionally cleaned and meticulously maintained uniform.</li>
-                        <li>The iWave-R air purifier is attached to mobiles air conditioning systems.</li>
-                        <li>Dry shields are attached to all high-volume suction lines to help with the removal of aerosols at the time of treatment procedures.</li>
-                        <li>AeroClave professionally cleans the mobile facilities. AeroClave is used in many hospitals, schools, Fire/EMS, Law Enforcement, and Military Aircraft</li>
-                    </ul>
-                </div>
-                <h2>In Health and Beautiful Smiles</h2>
-                <div className={styles.content}>
-                <p>In addition to the aforementioned, <strong>Miles For Smiles</strong> tediously monitors and follows the guidelines recommended by the CDC, LDH, and ADA. Our astute and agile team is adept at pivoting to ensure safety and high quality. Thank you for your partnership, and please contact Dr. Alexander for additional information.</p>
+                    <p><strong>Miles For Smiles</strong> follows ADA guidance and works closely with each facility&apos;s medical personnel. Thank you for your partnership, and please contact Dr. Alexander for additional information.</p>
                 </div>
                 <h2>Leading Our Communities to Better Health Care Outcomes</h2>
                 <div className={styles.content}>
