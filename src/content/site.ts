@@ -32,8 +32,12 @@ export const SITE = {
   },
   videoId: "HMW4FPLxFpE",
   social: [
-    { label: "Facebook", href: "https://www.facebook.com/milesforsmiles318/" },
-    { label: "Instagram", href: "https://www.instagram.com/milesforsmiles318" },
+    { network: "facebook", label: "Facebook", href: "https://www.facebook.com/milesforsmiles318/" },
+    {
+      network: "instagram",
+      label: "Instagram",
+      href: "https://www.instagram.com/milesforsmiles318",
+    },
   ],
 } as const;
 

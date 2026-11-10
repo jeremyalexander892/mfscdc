@@ -39,6 +39,15 @@ test.describe("home page", () => {
     await expect(footer.getByText("3704 W. Camp Wisdom Road, #120")).toBeVisible();
     await expect(footer.getByRole("link", { name: "doc@milesforsmiles.com" })).toBeVisible();
     await expect(footer.getByText("Monday to Friday, 8am to 4pm")).toBeVisible();
+    await expect(footer.getByRole("link", { name: /Facebook/ })).toHaveAttribute(
+      "href",
+      "https://www.facebook.com/milesforsmiles318/",
+    );
+    await expect(footer.getByRole("link", { name: /Instagram/ })).toHaveAttribute(
+      "href",
+      "https://www.instagram.com/milesforsmiles318",
+    );
+    await expect(footer.locator(".social-link svg")).toHaveCount(2);
   });
 
   test("consultation CTA opens a prefilled email", async ({ page }) => {
