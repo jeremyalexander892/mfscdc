@@ -114,8 +114,9 @@ every push to `master`:
 4. Build
 5. Playwright tests in five browser profiles, including an axe scan against WCAG 2.2 AA
 
-As of 2026-11-10, Lighthouse scores the page on the mobile profile at Performance 99,
-Accessibility 100, Best Practices 100 and SEO 100.
+As of 2026-11-10, Lighthouse scores the page 100 for Performance, Accessibility, Best Practices
+and SEO on both the mobile and desktop profiles, with zero layout shift. On Vercel preview
+deployments SEO reads lower because Vercel marks previews `noindex`, which is intended.
 
 ## Deployment
 
