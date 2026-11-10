@@ -38,11 +38,6 @@ const SideBar = ({isOpen, toggle}) => {
                         </Link>
                     </li>
                     <li className={styles.sidebarMenuItem}>
-                        <Link href="#resources" legacyBehavior>
-                            <a className={styles.sidebarMenuLink}>Resources</a>
-                        </Link>
-                    </li>
-                    <li className={styles.sidebarMenuItem}>
                         <Link href="#media" legacyBehavior>
                             <a className={styles.sidebarMenuLink}>Media</a>
                         </Link>

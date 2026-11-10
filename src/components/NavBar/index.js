@@ -49,9 +49,6 @@ const NavBar = ({toggle}) => {
                     <li className={styles.navMenuItem} onClick={() => jumpTo('#benefits')}>
                         <a className={styles.navMenuLink}>Benefits</a>
                     </li>
-                    <li className={styles.navMenuItem} onClick={() => jumpTo('#resources')}>
-                        <a className={styles.navMenuLink}>Resources</a>
-                    </li>
                     <li className={styles.navMenuItem} onClick={() => jumpTo('#media')}>
                         <a className={styles.navMenuLink}>Media</a>
                     </li>

@@ -15,7 +15,6 @@ const MyApp = ({Component, pageProps}) => {
                 <meta property="og:url" content="https://mfscdc.com/"/>
                 <meta property="og:locale" content="en_US"/>
                 <meta property="og:type" content="website"/>
-                <title>Home App</title>
                 <title>Miles For Smiles Correctional Facility Services</title>
             </Head>
             <Component {...pageProps} key={router.route}/>

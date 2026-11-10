@@ -11,9 +11,9 @@ const Benefits = () => {
                 <div className={styles.content}>
                     <ul className={styles.benefitsList}>
                         <li>Establish a collaborative relationship with each facility’s medical
-                            personnel to maintain electronic health records and HIPPA
+                            personnel to maintain electronic health records and HIPAA
                             compliance.</li>
-                        <li>Our dedicated staff has over 13 years of experience providing
+                        <li>Our dedicated staff has over 16 years of experience providing
                             quality comprehensive dental care, in addition to access to care for
                             emergency services within correctional facilities.</li>
                         <li>Our state of the art, self-contained mobile dental unit is equipped
@@ -32,7 +32,7 @@ const Benefits = () => {
                             treatment, by seeing up to 40 inmates/patients during a two-day
                             on-site visit.</li>
                         <li>Transportation funds and resources can be reallocated within your
-                            facility. Please see attachment for COVID-19 implementations.</li>
+                            facility.</li>
                     </ul>
                     <div className={styles.imageContainer}>
                         <Image
