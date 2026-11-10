@@ -325,6 +325,15 @@
     }
   }
 
+  .on-dark .text-link {
+    color: var(--white);
+    padding-inline: 0.5rem;
+
+    &:hover {
+      color: var(--white);
+    }
+  }
+
   /* Lime rule across the top of a card, echoing the flyer's banded sections. */
   .crown {
     position: relative;

@@ -1,10 +1,7 @@
 ---
 import { Picture } from "astro:assets";
-import { ArrowRight, Phone, ShieldCheck } from "@lucide/astro";
+import { ArrowDown, ArrowRight, Phone, ShieldCheck } from "@lucide/astro";
 import heroImage from "../assets/images/team-unit.jpeg";
-import { OFFICES } from "../content/site";
-
-const [louisiana] = OFFICES;
 ---
 
 <section id="top" class="hero on-dark" aria-labelledby="hero-title">
@@ -38,12 +35,11 @@ const [louisiana] = OFFICES;
         Request a facility consultation
         <ArrowRight size={18} aria-hidden="true" class="icon-trailing" />
       </a>
-      {louisiana && (
-        <a href={louisiana.phoneHref} class="btn btn--ghost-dark">
-          <Phone size={18} aria-hidden="true" />
-          Call {louisiana.phone}
-        </a>
-      )}
+      <a href="#contact" class="text-link">
+        <Phone size={18} aria-hidden="true" />
+        Call an office
+        <ArrowDown size={16} aria-hidden="true" />
+      </a>
     </div>
   </div>
 </section>
@@ -141,6 +137,7 @@ const [louisiana] = OFFICES;
 
   .hero-actions {
     display: flex;
+    align-items: center;
     flex-wrap: wrap;
     gap: var(--space-xs);
     padding-block-start: var(--space-2xs);

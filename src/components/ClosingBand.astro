@@ -1,7 +1,5 @@
 ---
-import { OFFICES } from "../content/site";
-
-const texas = OFFICES.find((office) => office.id === "tx");
+import { ArrowDown, Phone } from "@lucide/astro";
 ---
 
 <section class="closing on-dark texture" aria-labelledby="closing-title">
@@ -13,11 +11,11 @@ const texas = OFFICES.find((office) => office.id === "tx");
       <a href="#contact" class="btn btn--primary">
         Request a facility consultation
       </a>
-      {texas && (
-        <a href={texas.phoneHref} class="btn btn--ghost-dark">
-          Texas {texas.phone}
-        </a>
-      )}
+      <a href="#contact" class="text-link">
+        <Phone size={18} aria-hidden="true" />
+        Call an office
+        <ArrowDown size={16} aria-hidden="true" />
+      </a>
     </div>
   </div>
 </section>
@@ -43,6 +41,7 @@ const texas = OFFICES.find((office) => office.id === "tx");
 
   .actions {
     display: flex;
+    align-items: center;
     flex-wrap: wrap;
     justify-content: center;
     gap: var(--space-xs);

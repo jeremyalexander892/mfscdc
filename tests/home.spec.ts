@@ -50,6 +50,16 @@ test.describe("home page", () => {
     await expect(footer.locator(".social-link svg")).toHaveCount(2);
   });
 
+  test("hero and closing band treat both offices equally", async ({ page }) => {
+    for (const section of [page.locator("#top"), page.locator(".closing")]) {
+      await expect(section.locator('a[href^="tel:"]')).toHaveCount(0);
+      await expect(section.getByRole("link", { name: "Call an office" })).toHaveAttribute(
+        "href",
+        "#contact",
+      );
+    }
+  });
+
   test("consultation CTA opens a prefilled email", async ({ page }) => {
     const cta = page.getByRole("link", { name: "Email the office" });
     await expect(cta).toHaveAttribute(
