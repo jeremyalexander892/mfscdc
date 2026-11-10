@@ -90,12 +90,21 @@ import heroImage from "../assets/images/team-unit.jpeg";
 
   @media (min-width: 64rem) {
     .hero-scrim {
+      /*
+       * Stops are measured from the text column (--copy-start), not the
+       * screen width: the overlay stays dark behind the copy, then falls off
+       * fast so the team's faces read clearly.
+       */
+      --copy-start: max(var(--gutter), 50% - var(--container) / 2);
       background: linear-gradient(
-        100deg,
+        90deg,
         rgb(4 22 80 / 0.94) 0%,
-        rgb(4 22 80 / 0.84) 36%,
-        rgb(6 42 104 / 0.5) 62%,
-        rgb(7 46 110 / 0.12) 100%
+        rgb(4 22 80 / 0.88) calc(var(--copy-start) + 34rem),
+        rgb(4 26 86 / 0.66) calc(var(--copy-start) + 41rem),
+        rgb(5 32 92 / 0.36) calc(var(--copy-start) + 48rem),
+        rgb(6 40 102 / 0.14) calc(var(--copy-start) + 55rem),
+        rgb(7 46 110 / 0.04) calc(var(--copy-start) + 64rem),
+        rgb(7 46 110 / 0.02) 100%
       );
     }
   }
