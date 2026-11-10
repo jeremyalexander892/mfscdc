@@ -90,7 +90,9 @@ export default defineConfig({
       weights: [400],
       styles: ["normal"],
       subsets: ["latin"],
-      fallbacks: ["cursive"],
+      // A metric-matched serif fallback keeps the hero headline from re-wrapping
+      // when the script font swaps in. Generic "cursive" cannot be size-adjusted.
+      fallbacks: ["serif"],
     },
   ],
 });
