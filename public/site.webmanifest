@@ -1,0 +1,13 @@
+{
+  "name": "Miles For Smiles",
+  "short_name": "Miles For Smiles",
+  "description": "Mobile dental care for correctional facilities in Louisiana and Texas.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#ffffff",
+  "theme_color": "#041650",
+  "icons": [
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

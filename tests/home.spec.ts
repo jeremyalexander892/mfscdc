@@ -61,6 +61,23 @@ test.describe("home page", () => {
     expect(results.violations).toEqual([]);
   });
 
+  test("loads without console errors or CSP violations", async ({ page }) => {
+    const problems: string[] = [];
+    page.on("console", (msg) => {
+      if (msg.type() === "error") problems.push(msg.text());
+    });
+    page.on("pageerror", (error) => problems.push(error.message));
+    await page.addInitScript(() => {
+      document.addEventListener("securitypolicyviolation", (event) => {
+        console.error(`CSP violation: ${event.violatedDirective} ${event.blockedURI}`);
+      });
+    });
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+    await expect(page.locator('meta[http-equiv="content-security-policy"]')).toHaveCount(1);
+    expect(problems).toEqual([]);
+  });
+
   test("does not scroll horizontally", async ({ page }) => {
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,

@@ -23,7 +23,8 @@ const [louisiana] = OFFICES;
   <div class="container hero-content">
     <p class="eyebrow hero-eyebrow">
       <ShieldCheck size={16} aria-hidden="true" />
-      Correctional dental care · Louisiana &amp; Texas
+      <span class="nowrap">Correctional dental care ·</span>
+      <span class="nowrap">Louisiana &amp; Texas</span>
     </p>
     <h1 id="hero-title" class="hero-title">
       Dental care, <span class="script">delivered</span> inside your facility.
@@ -115,9 +116,14 @@ const [louisiana] = OFFICES;
   }
 
   .hero-eyebrow {
-    display: inline-flex;
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 0.625rem;
+    column-gap: 0.5em;
+  }
+
+  .nowrap {
+    white-space: nowrap;
   }
 
   .hero-title {

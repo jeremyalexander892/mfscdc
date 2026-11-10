@@ -13,6 +13,26 @@ export default defineConfig({
   // The whole stylesheet is small; inlining it removes the render-blocking request.
   build: { inlineStylesheets: "always" },
   integrations: [sitemap()],
+  // No Markdown on this site; Shiki would otherwise emit CSP-incompatible inline styles.
+  markdown: { syntaxHighlight: false },
+  // Content Security Policy as a <meta> tag, so it travels with the HTML on any
+  // host. Astro hashes its own inline scripts and styles into script-src and
+  // style-src; everything else is locked to this origin, except the YouTube
+  // player, which loads only after a visitor clicks play.
+  security: {
+    csp: {
+      directives: [
+        "default-src 'self'",
+        "img-src 'self' data:",
+        "font-src 'self'",
+        "connect-src 'self'",
+        "frame-src https://www.youtube-nocookie.com",
+        "base-uri 'self'",
+        "form-action 'self'",
+        "object-src 'none'",
+      ],
+    },
+  },
   fonts: [
     {
       provider: fontProviders.fontsource(),

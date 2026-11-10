@@ -95,9 +95,23 @@ import { NAV, OFFICES } from "../content/site";
       });
     }
 
+    // Following a link closes the menu and lets the page move to that section.
+    let closedByLink = false;
     menu.addEventListener("click", (event) => {
       const target = event.target;
-      if (target instanceof Element && target.closest("a")) menu.close();
+      if (target instanceof Element && target.closest("a")) {
+        closedByLink = true;
+        menu.close();
+      }
+    });
+
+    // Any other dismissal (Escape, close button) returns focus to the toggle.
+    // Browsers only do this when the toggle had focus, and iOS Safari does not
+    // focus buttons on tap.
+    const toggle = document.querySelector<HTMLButtonElement>(".menu-toggle");
+    menu.addEventListener("close", () => {
+      if (!closedByLink) toggle?.focus();
+      closedByLink = false;
     });
   }
 </script>

@@ -9,12 +9,15 @@ const pillars = [
 ];
 ---
 
-<section id="services" class="pillars" aria-label="What we bring to your facility">
+<section id="services" class="pillars" aria-labelledby="pillars-title">
+  <h2 id="pillars-title" class="visually-hidden">
+    What we bring to your facility
+  </h2>
   <ul class="container pillar-grid">
     {pillars.map(({ icon: Icon, title, text }) => (
       <li class="pillar">
         <Icon size={44} stroke-width={1.5} aria-hidden="true" class="pillar-icon" />
-        <h2 class="pillar-title">{title}</h2>
+        <h3 class="pillar-title">{title}</h3>
         <p>{text}</p>
       </li>
     ))}
