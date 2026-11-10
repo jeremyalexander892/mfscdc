@@ -1,0 +1,118 @@
+---
+import { Font, getImage } from "astro:assets";
+import "../styles/brand.css";
+import heroImage from "../assets/images/team-unit.jpeg";
+import { OFFICES, SITE } from "../content/site";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = SITE.description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = await getImage({ src: heroImage, width: 1200, height: 630, format: "jpg" });
+const ogImageUrl = new URL(ogImage.src, Astro.site);
+
+const organizationId = `${SITE.url}/#organization`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "MedicalOrganization",
+      "@id": organizationId,
+      name: SITE.name,
+      legalName: SITE.legalName,
+      url: SITE.url,
+      email: SITE.email,
+      description: SITE.description,
+      medicalSpecialty: "Dentistry",
+      sameAs: SITE.social.map((s) => s.href),
+    },
+    ...OFFICES.map((office) => ({
+      "@type": "Dentist",
+      "@id": `${SITE.url}/#office-${office.id}`,
+      name: `${SITE.name} (${office.state})`,
+      parentOrganization: { "@id": organizationId },
+      telephone: office.phone,
+      email: SITE.email,
+      url: SITE.url,
+      image: ogImageUrl.href,
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: office.street,
+        addressLocality: office.city,
+        addressRegion: office.stateCode,
+        postalCode: office.postalCode,
+        addressCountry: "US",
+      },
+      openingHoursSpecification: {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: SITE.hoursSpec.days,
+        opens: SITE.hoursSpec.opens,
+        closes: SITE.hoursSpec.closes,
+      },
+    })),
+  ],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#041650" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="The Miles For Smiles team in front of the mobile dental unit"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <Font cssVariable="--font-display" preload />
+    <Font cssVariable="--font-sans" preload />
+    <Font cssVariable="--font-script" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">
+      Skip to content
+    </a>
+    <slot />
+  </body>
+</html>
+
+<style>
+  .skip-link {
+    position: fixed;
+    inset-block-start: var(--space-s);
+    inset-inline-start: var(--space-s);
+    z-index: 100;
+    padding: var(--space-xs) var(--space-s);
+    border-radius: var(--radius-control);
+    background: var(--white);
+    color: var(--brand-navy);
+    font-weight: 800;
+    translate: 0 -200%;
+
+    &:focus-visible {
+      translate: 0 0;
+    }
+  }
+</style>

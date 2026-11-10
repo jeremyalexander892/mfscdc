@@ -1,0 +1,73 @@
+---
+import { Image } from "astro:assets";
+import logo from "../assets/images/logo-white.png";
+import { SITE } from "../content/site";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer on-dark">
+  <div class="container inner">
+    <Image src={logo} densities={[1, 2]} alt="Miles For Smiles" height={34} class="logo" />
+    <nav aria-label="Social">
+      <ul class="links">
+        {SITE.social.map((item) => (
+          <li>
+            <a href={item.href} rel="noopener noreferrer" target="_blank">
+              {item.label}
+              <span class="visually-hidden"> (opens in a new tab)</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <p class="copy">
+      © {year} {SITE.legalName}
+    </p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--brand-navy-deep);
+    border-block-start: 1px solid rgb(255 255 255 / 0.12);
+    color: var(--on-dark-muted);
+    font-size: var(--step--1);
+  }
+
+  .inner {
+    padding-block: var(--space-l);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-m);
+  }
+
+  .logo {
+    inline-size: auto;
+    block-size: 2.125rem;
+  }
+
+  .links {
+    display: flex;
+    gap: var(--space-m);
+
+    & a {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: 2.75rem;
+      color: var(--white);
+    }
+  }
+
+  .copy {
+    margin-inline-start: auto;
+  }
+
+  @media (max-width: 40rem) {
+    .copy {
+      margin-inline-start: 0;
+    }
+  }
+</style>

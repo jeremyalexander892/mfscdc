@@ -1,0 +1,50 @@
+---
+import { OFFICES } from "../content/site";
+
+const texas = OFFICES.find((office) => office.id === "tx");
+---
+
+<section class="closing on-dark texture" aria-labelledby="closing-title">
+  <div class="container inner" data-reveal>
+    <h2 id="closing-title">
+      Leading our communities to <span class="script">better</span> health care outcomes.
+    </h2>
+    <div class="actions">
+      <a href="#contact" class="btn btn--primary">
+        Request a facility consultation
+      </a>
+      {texas && (
+        <a href={texas.phoneHref} class="btn btn--ghost-dark">
+          Texas {texas.phone}
+        </a>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .closing {
+    background: var(--brand-navy-deep);
+    padding-block: clamp(4rem, 3rem + 4vw, 6rem);
+  }
+
+  .inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-m);
+    text-align: center;
+
+    & h2 {
+      font-size: clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
+      max-inline-size: 48rem;
+    }
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-xs);
+  }
+</style>

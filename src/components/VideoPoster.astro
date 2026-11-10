@@ -1,0 +1,169 @@
+---
+import { Image } from "astro:assets";
+import { Play } from "@lucide/astro";
+import poster from "../assets/images/team-portrait.jpeg";
+
+interface Props {
+  videoId: string;
+  title: string;
+}
+
+const { videoId, title } = Astro.props;
+const watchUrl = `https://www.youtube.com/watch?v=${videoId}`;
+---
+
+<div class="video" data-video-id={videoId} data-video-title={title}>
+  <button type="button" class="poster" aria-label={`Play video: ${title}`}>
+    <Image
+      src={poster}
+      alt=""
+      widths={[480, 720, 960, 1280]}
+      sizes="(min-width: 64rem) 34rem, 100vw"
+      class="poster-img"
+    />
+    <span class="poster-scrim" aria-hidden="true"></span>
+    <span class="play" aria-hidden="true">
+      <Play size={30} fill="currentColor" stroke-width={0} class="play-icon" />
+      <span class="spinner"></span>
+    </span>
+  </button>
+  <p class="fallback">
+    Video not loading?{" "}
+    <a href={watchUrl} rel="noopener noreferrer" target="_blank">
+      Watch on YouTube
+    </a>
+  </p>
+</div>
+
+<script>
+  // Click-to-load: the YouTube player (≈500 KB) is only fetched when asked for,
+  // from the privacy-enhanced nocookie domain.
+  document.querySelectorAll<HTMLElement>(".video[data-video-id]").forEach((root) => {
+    const button = root.querySelector<HTMLButtonElement>(".poster");
+    const { videoId, videoTitle } = root.dataset;
+    if (!button || !videoId) return;
+
+    button.addEventListener(
+      "click",
+      () => {
+        root.dataset["state"] = "loading";
+        button.setAttribute("aria-busy", "true");
+
+        const iframe = document.createElement("iframe");
+        iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`;
+        iframe.title = videoTitle ?? "Video";
+        iframe.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
+        iframe.referrerPolicy = "strict-origin-when-cross-origin";
+        iframe.className = "player";
+        iframe.addEventListener("load", () => {
+          root.dataset["state"] = "playing";
+          button.remove();
+          iframe.focus();
+        });
+        root.prepend(iframe);
+      },
+      { once: true },
+    );
+  });
+</script>
+
+<style>
+  .video {
+    position: relative;
+    display: grid;
+    gap: var(--space-xs);
+  }
+
+  .poster,
+  .video :global(.player) {
+    grid-area: 1 / 1;
+    inline-size: 100%;
+    aspect-ratio: 16 / 10;
+    border: 0;
+    border-radius: var(--radius-media);
+    box-shadow: var(--shadow-media);
+  }
+
+  .poster {
+    position: relative;
+    padding: 0;
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--brand-navy-deep);
+  }
+
+  .poster-img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .poster-scrim {
+    position: absolute;
+    inset: 0;
+    background: rgb(4 22 80 / 0.25);
+    transition: background-color var(--duration) var(--ease-out);
+  }
+
+  .poster:hover .poster-scrim {
+    background: rgb(4 22 80 / 0.15);
+  }
+
+  .play {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    translate: -50% -50%;
+    inline-size: 5rem;
+    block-size: 5rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--brand-lime);
+    color: var(--brand-navy);
+    box-shadow: var(--shadow-cta);
+    transition: scale var(--duration) var(--ease-out);
+  }
+
+  .play :global(.play-icon) {
+    translate: 2px 0;
+  }
+
+  .poster:hover .play {
+    scale: 1.06;
+  }
+
+  .spinner {
+    display: none;
+    inline-size: 2rem;
+    block-size: 2rem;
+    border-radius: 50%;
+    border: 3px solid rgb(7 46 110 / 0.25);
+    border-block-start-color: var(--brand-navy);
+  }
+
+  .video[data-state="loading"] .play :global(.play-icon) {
+    display: none;
+  }
+
+  .video[data-state="loading"] .spinner {
+    display: block;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .video[data-state="loading"] .spinner {
+      animation-duration: 2.4s;
+    }
+  }
+
+  @keyframes spin {
+    to {
+      rotate: 1turn;
+    }
+  }
+
+  .fallback {
+    font-size: var(--step--1);
+    color: var(--ink-muted);
+  }
+</style>

@@ -1,0 +1,21 @@
+---
+import VideoPoster from "./VideoPoster.astro";
+import { SITE } from "../content/site";
+---
+
+<section id="about" class="section" aria-labelledby="about-title">
+  <div class="container split">
+    <VideoPoster videoId={SITE.videoId} title="Learn more about Miles For Smiles" />
+    <div class="stack" data-reveal>
+      <p class="eyebrow">About Miles For Smiles</p>
+      <h2 id="about-title" class="section-title">
+        Led by Dr. Alexander and a team that knows corrections
+      </h2>
+      <p class="lede">
+        Miles For Smiles is a sterile, self-contained mobile dental practice committed to quality
+        care for every community, including the people inside correctional facilities. We follow ADA
+        guidance and partner closely with each facility's medical personnel.
+      </p>
+    </div>
+  </div>
+</section>

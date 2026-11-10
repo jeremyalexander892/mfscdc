@@ -1,0 +1,148 @@
+---
+import { Picture } from "astro:assets";
+import { ArrowRight, Phone, ShieldCheck } from "@lucide/astro";
+import heroImage from "../assets/images/team-unit.jpeg";
+import { OFFICES } from "../content/site";
+
+const [louisiana] = OFFICES;
+---
+
+<section id="top" class="hero on-dark" aria-labelledby="hero-title">
+  <Picture
+    src={heroImage}
+    alt=""
+    formats={["avif", "webp"]}
+    widths={[640, 960, 1280, 1920, 2560]}
+    sizes="100vw"
+    loading="eager"
+    fetchpriority="high"
+    class="hero-media"
+  />
+  <div class="hero-scrim" aria-hidden="true"></div>
+
+  <div class="container hero-content">
+    <p class="eyebrow hero-eyebrow">
+      <ShieldCheck size={16} aria-hidden="true" />
+      Correctional dental care · Louisiana &amp; Texas
+    </p>
+    <h1 id="hero-title" class="hero-title">
+      Dental care, <span class="script">delivered</span> inside your facility.
+    </h1>
+    <p class="hero-lede">
+      A self-contained mobile clinic that treats adult and juvenile populations on site. No
+      transport, no added security risk, no lost staff hours.
+    </p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn btn--primary btn--elevated">
+        Request a facility consultation
+        <ArrowRight size={18} aria-hidden="true" class="icon-trailing" />
+      </a>
+      {louisiana && (
+        <a href={louisiana.phoneHref} class="btn btn--ghost-dark">
+          <Phone size={18} aria-hidden="true" />
+          Call {louisiana.phone}
+        </a>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--brand-navy-deep);
+    min-block-size: min(92svh, 56rem);
+    display: grid;
+    align-items: center;
+  }
+
+  /* Astro puts the class on the <img>; the <picture> wrapper must leave the grid flow too. */
+  .hero > :global(picture) {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+
+  .hero :global(.hero-media) {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    object-position: 65% 50%;
+  }
+
+  /*
+   * The photo is bright on the left where the copy sits, so contrast has to
+   * come from the scrim, not the image. Phones get a vertical wash because the
+   * copy spans the full width there.
+   */
+  .hero-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+      180deg,
+      rgb(4 22 80 / 0.9) 0%,
+      rgb(4 22 80 / 0.82) 50%,
+      rgb(4 22 80 / 0.7) 78%,
+      rgb(4 22 80 / 0.64) 100%
+    );
+  }
+
+  @media (min-width: 64rem) {
+    .hero-scrim {
+      background: linear-gradient(
+        100deg,
+        rgb(4 22 80 / 0.94) 0%,
+        rgb(4 22 80 / 0.84) 36%,
+        rgb(6 42 104 / 0.5) 62%,
+        rgb(7 46 110 / 0.12) 100%
+      );
+    }
+  }
+
+  .hero-content {
+    padding-block: calc(var(--header-h) + var(--space-2xl)) var(--space-2xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+    max-inline-size: var(--container);
+  }
+
+  .hero-content > * {
+    max-inline-size: 44rem;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+  }
+
+  .hero-title {
+    font-size: var(--step-4);
+    line-height: 1.04;
+    letter-spacing: -0.015em;
+  }
+
+  .hero-lede {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: rgb(255 255 255 / 0.9);
+    max-inline-size: 36rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    padding-block-start: var(--space-2xs);
+  }
+
+  @media (max-width: 30rem) {
+    .hero-actions :global(.btn) {
+      inline-size: 100%;
+    }
+  }
+</style>

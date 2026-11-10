@@ -1,0 +1,141 @@
+---
+import { Mail, MapPin, Phone } from "@lucide/astro";
+import { OFFICES, SITE } from "../content/site";
+---
+
+<section id="contact" class="section locations" aria-labelledby="locations-title">
+  <div class="container stack-lg">
+    <header class="stack head" data-reveal>
+      <p class="eyebrow">Locations</p>
+      <h2 id="locations-title" class="section-title">
+        Talk to the office nearest your facility
+      </h2>
+      <p class="lede">{SITE.hours}. Emergency and same-day services available.</p>
+    </header>
+
+    <div class="grid">
+      {OFFICES.map((office) => (
+        <article class="office crown" aria-labelledby={`office-${office.id}`} data-reveal>
+          <h3 id={`office-${office.id}`}>{office.state}</h3>
+          <a href={office.phoneHref} class="phone">
+            <Phone size={20} aria-hidden="true" class="icon" />
+            {office.phone}
+          </a>
+          <address>
+            <MapPin size={20} aria-hidden="true" class="icon" />
+            <span>
+              {office.street}
+              <br />
+              {office.city}, {office.stateCode} {office.postalCode}
+            </span>
+          </address>
+        </article>
+      ))}
+
+      <article class="request on-dark" aria-labelledby="request-title" data-reveal>
+        <h3 id="request-title">Request a consultation</h3>
+        <p>
+          Share your facility, population size and timeline. Dr. Alexander's office will follow up.
+        </p>
+        <p class="email">{SITE.email}</p>
+        <a href={SITE.emailHref} class="btn btn--primary">
+          <Mail size={18} aria-hidden="true" />
+          Email the office
+        </a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .stack-lg {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+  }
+
+  .head {
+    max-inline-size: 44rem;
+    gap: var(--space-s);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+    gap: var(--space-m);
+  }
+
+  .office,
+  .request {
+    border-radius: var(--radius-card);
+    padding: calc(var(--space-l) + var(--crown)) var(--space-l) var(--space-l);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+
+    & h3 {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: 1.75rem;
+    }
+  }
+
+  .office {
+    border: 1px solid var(--border);
+  }
+
+  .office :global(.icon) {
+    flex: none;
+    color: var(--brand-green);
+  }
+
+  .phone {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-block-size: 2.75rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  address {
+    display: flex;
+    gap: 0.625rem;
+    font-size: 1rem;
+    color: var(--ink-muted);
+
+    & :global(.icon) {
+      margin-block-start: 0.2rem;
+    }
+  }
+
+  .request {
+    background: var(--brand-navy);
+    padding-block-start: var(--space-l);
+
+    & p {
+      font-size: 1rem;
+      color: var(--on-dark-muted);
+    }
+
+    /* When the grid wraps to two columns, give the request card the full row. */
+    @media (min-width: 40rem) and (max-width: 63.99rem) {
+      grid-column: 1 / -1;
+    }
+
+    & .email {
+      margin-block-start: auto;
+      color: var(--white);
+      font-weight: 700;
+    }
+
+    & :global(.btn) {
+      font-size: 1rem;
+    }
+  }
+</style>

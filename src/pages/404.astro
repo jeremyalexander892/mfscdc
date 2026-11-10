@@ -1,0 +1,47 @@
+---
+import Base from "../layouts/Base.astro";
+import { OFFICES } from "../content/site";
+---
+
+<Base title="Page not found | Miles For Smiles" description="This page could not be found.">
+  <main id="main" class="not-found on-dark">
+    <div class="container stack">
+      <p class="eyebrow">404</p>
+      <h1>We couldn't find that page.</h1>
+      <p class="lede">The link may be out of date. Everything we offer is on the home page.</p>
+      <div class="actions">
+        <a href="/" class="btn btn--primary">
+          Back to the home page
+        </a>
+        {OFFICES.map((office) => (
+          <a href={office.phoneHref} class="btn btn--ghost-dark">
+            Call {office.state}
+          </a>
+        ))}
+      </div>
+    </div>
+  </main>
+</Base>
+
+<style>
+  .not-found {
+    min-block-size: 100dvh;
+    display: grid;
+    align-items: center;
+    background: var(--brand-navy-deep);
+
+    & h1 {
+      font-size: var(--step-4);
+    }
+
+    & .lede {
+      color: var(--on-dark-muted);
+    }
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+</style>
