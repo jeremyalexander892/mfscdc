@@ -96,7 +96,8 @@ for body text, and **Yellowtail** for at most one script word per view.
   animations. Browsers without support, such as Firefox, get the static version. Visitors who
   prefer reduced motion get no motion.
 - **Self-hosted, click-to-load video.** `public/video/` holds an H.264/AAC MP4 (metadata at the
-  front, so it starts playing while it downloads) and English WebVTT captions, on by default.
+  front, so it starts playing while it downloads) and optional English WebVTT captions, which
+  viewers turn on from the player's CC control.
   Nothing is requested until a visitor presses play. If the file can't play, the player shows an
   error and a download link. The video's URL and size label live in `src/content/site.ts`.
 - **Images.** Responsive AVIF and WebP with fixed dimensions, so the layout doesn't shift as the

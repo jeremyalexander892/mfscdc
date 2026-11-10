@@ -94,11 +94,9 @@ const { src, captions, sizeLabel, title } = Astro.props;
           track.srclang = "en";
           track.label = "English";
           track.src = videoCaptions;
-          track.default = true;
+          // Off by default: viewers turn captions on from the player's CC control. Browsers that
+          // honor a system-wide captions preference (e.g. Safari) still switch them on automatically.
           video.append(track);
-          // WebKit ignores `default` on captions unless the viewer enabled captions system-wide;
-          // switch them on explicitly so every browser matches. The CC control still turns them off.
-          track.track.mode = "showing";
         }
 
         video.addEventListener("playing", () => reveal(video), { once: true });

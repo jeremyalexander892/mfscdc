@@ -77,7 +77,7 @@ test.describe("home page", () => {
     }
   });
 
-  test("video is fetched only after the poster is activated, with captions on", async ({
+  test("video is fetched only after the poster is activated, with optional captions", async ({
     page,
   }) => {
     const videoRequests: string[] = [];
@@ -106,10 +106,25 @@ test.describe("home page", () => {
     await expect(video.locator("source")).toHaveAttribute("src", "/video/miles-for-smiles.mp4");
     await expect(video).toHaveJSProperty("controls", true);
     await expect
-      .poll(() => video.evaluate((v: HTMLVideoElement) => v.textTracks[0]?.mode))
-      .toBe("showing");
-    await expect
       .poll(() => video.evaluate((v: HTMLVideoElement) => v.currentTime))
+      .toBeGreaterThan(0);
+
+    // Captions are offered but off until the viewer turns them on.
+    const track = await video.evaluate((v: HTMLVideoElement) => {
+      const t = v.textTracks[0];
+      return t && { kind: t.kind, label: t.label, lang: t.language, mode: t.mode };
+    });
+    expect(track).toEqual({ kind: "captions", label: "English", lang: "en", mode: "disabled" });
+
+    // Turning them on (what the CC control does) shows cues from the file.
+    await video.evaluate((v: HTMLVideoElement) => {
+      v.pause();
+      const t = v.textTracks[0];
+      if (t) t.mode = "showing";
+      v.currentTime = 31;
+    });
+    await expect
+      .poll(() => video.evaluate((v: HTMLVideoElement) => v.textTracks[0]?.activeCues?.length ?? 0))
       .toBeGreaterThan(0);
   });
 
