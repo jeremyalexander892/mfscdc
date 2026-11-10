@@ -4,13 +4,14 @@ import { Play } from "@lucide/astro";
 import poster from "../assets/images/team-portrait.jpeg";
 
 interface Props {
-  /** Same-origin 1080p MP4 (H.264/AAC, faststart) for wide screens; also the download. */
+  /** Same-origin 1080p MP4 (H.264/AAC, faststart) for wide screens. */
   src: string;
-  /** Same-origin 720p MP4 for phones, tablets, laptops and constrained connections. */
+  /** Same-origin 720p MP4 for phones, tablets, laptops and constrained connections; also the
+   * download offered when playback fails (smaller, since failures skew to weak connections). */
   srcSd: string;
   /** Same-origin English WebVTT captions. */
   captions: string;
-  /** Shown on the download link, e.g. "MP4, 39 MB". */
+  /** Size of the 720p download, e.g. "MP4, 17 MB". */
   sizeLabel: string;
   title: string;
 }
@@ -40,12 +41,14 @@ const { src, srcSd, captions, sizeLabel, title } = Astro.props;
       <span class="spinner"></span>
     </span>
   </button>
+  {/* The live region is always present (empty) so the message is announced when it appears. */}
   <p class="fallback" role="status">
-    <span class="error-text">The video couldn't load.</span>
-    <span class="hint-text">Video not playing?</span>{" "}
-    <a href={src} download>
-      Download the video ({sizeLabel})
-    </a>
+    <span class="fallback-message" hidden>
+      <strong>The video couldn't load.</strong>{" "}
+      <a href={srcSd} download>
+        Download the video ({sizeLabel})
+      </a>
+    </span>
   </p>
 </div>
 
@@ -82,6 +85,7 @@ const { src, srcSd, captions, sizeLabel, title } = Astro.props;
 
     const fail = () => {
       root.dataset["state"] = "error";
+      root.querySelector<HTMLElement>(".fallback-message")?.removeAttribute("hidden");
       video?.remove();
       button.removeAttribute("aria-busy");
       button.disabled = true;
@@ -158,7 +162,6 @@ const { src, srcSd, captions, sizeLabel, title } = Astro.props;
   .video {
     position: relative;
     display: grid;
-    gap: var(--space-xs);
   }
 
   .poster,
@@ -261,22 +264,20 @@ const { src, srcSd, captions, sizeLabel, title } = Astro.props;
     }
   }
 
+  /* Empty (zero height, no gap) until playback fails. */
   .fallback {
     font-size: var(--step--1);
     color: var(--ink-muted);
   }
 
-  .error-text {
-    display: none;
-    font-weight: 700;
+  .video[data-state="error"] .fallback {
+    padding-block-start: var(--space-xs);
+  }
+
+  .fallback strong {
     color: var(--ink);
   }
 
-  .video[data-state="error"] .error-text {
-    display: inline;
-  }
-
-  .video[data-state="error"] .hint-text,
   .video[data-state="error"] .play {
     display: none;
   }

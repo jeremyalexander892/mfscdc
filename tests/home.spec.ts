@@ -93,6 +93,9 @@ test.describe("home page", () => {
     await page.locator("#about").scrollIntoViewIfNeeded();
     await expect(page.locator("video")).toHaveCount(0);
     expect(videoRequests).toEqual([]);
+    // No download prompt unless playback actually fails.
+    const download = page.getByRole("link", { name: /Download the video/ });
+    await expect(download).toBeHidden();
 
     const canPlay = await page.evaluate(() =>
       document.createElement("video").canPlayType('video/mp4; codecs="avc1.640029, mp4a.40.2"'),
@@ -114,6 +117,7 @@ test.describe("home page", () => {
     await expect
       .poll(() => video.evaluate((v: HTMLVideoElement) => v.currentTime))
       .toBeGreaterThan(0);
+    await expect(download).toBeHidden();
 
     // Captions are offered but off until the viewer turns them on.
     const track = await video.evaluate((v: HTMLVideoElement) => {
@@ -161,10 +165,11 @@ test.describe("home page", () => {
 
     await expect(page.locator(".video")).toHaveAttribute("data-state", "error");
     await expect(page.getByText("The video couldn't load.")).toBeVisible();
-    await expect(page.getByRole("link", { name: /Download the video/ })).toHaveAttribute(
-      "href",
-      "/video/miles-for-smiles.mp4",
-    );
+    // Offers the smaller 720p file: failures skew toward weak connections.
+    const download = page.getByRole("link", { name: "Download the video (MP4, 17 MB)" });
+    await expect(download).toBeVisible();
+    await expect(download).toHaveAttribute("href", SD_VIDEO);
+    await expect(page.getByRole("status")).toContainText("The video couldn't load.");
     await expect(button).toBeDisabled();
     await expect(page.locator("video")).toHaveCount(0);
   });

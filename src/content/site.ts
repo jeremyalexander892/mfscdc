@@ -31,12 +31,13 @@ export const SITE = {
     closes: "16:00",
   },
   // Self-hosted from public/video: H.264/AAC MP4s (faststart) plus English WebVTT captions.
-  // 1080p (~2.5 Mbps) for wide screens and the download; 720p (~1 Mbps) for everyone else.
+  // 1080p (~2.5 Mbps) for wide screens; 720p (~1 Mbps) for everyone else and for the download
+  // link, which only appears if playback fails.
   video: {
     src: "/video/miles-for-smiles.mp4",
     srcSd: "/video/miles-for-smiles-720p.mp4",
     captions: "/video/miles-for-smiles.en.vtt",
-    sizeLabel: "MP4, 39 MB",
+    sizeLabel: "MP4, 17 MB",
   },
   social: [
     { network: "facebook", label: "Facebook", href: "https://www.facebook.com/milesforsmiles318/" },
