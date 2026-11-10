@@ -29,6 +29,18 @@ test.describe("home page", () => {
     await expect(contact.getByText("3704 W. Camp Wisdom Road, #120")).toBeVisible();
   });
 
+  test("footer lists both offices, email and hours", async ({ page }) => {
+    const footer = page.locator("footer");
+    await expect(footer.getByRole("heading", { name: "Louisiana" })).toBeVisible();
+    await expect(footer.getByRole("heading", { name: "Texas" })).toBeVisible();
+    await expect(footer.locator('a[href="tel:+13183172800"]')).toHaveText("(318) 317-2800");
+    await expect(footer.locator('a[href="tel:+19728052900"]')).toHaveText("(972) 805-2900");
+    await expect(footer.getByText("3226 Mackey Lane")).toBeVisible();
+    await expect(footer.getByText("3704 W. Camp Wisdom Road, #120")).toBeVisible();
+    await expect(footer.getByRole("link", { name: "doc@milesforsmiles.com" })).toBeVisible();
+    await expect(footer.getByText("Monday to Friday, 8am to 4pm")).toBeVisible();
+  });
+
   test("consultation CTA opens a prefilled email", async ({ page }) => {
     const cta = page.getByRole("link", { name: "Email the office" });
     await expect(cta).toHaveAttribute(
