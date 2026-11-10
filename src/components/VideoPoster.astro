@@ -4,15 +4,25 @@ import { Play } from "@lucide/astro";
 import poster from "../assets/images/team-portrait.jpeg";
 
 interface Props {
-  videoId: string;
+  /** Same-origin MP4 (H.264/AAC, faststart). */
+  src: string;
+  /** Same-origin English WebVTT captions. */
+  captions: string;
+  /** Shown on the download link, e.g. "MP4, 39 MB". */
+  sizeLabel: string;
   title: string;
 }
 
-const { videoId, title } = Astro.props;
-const watchUrl = `https://www.youtube.com/watch?v=${videoId}`;
+const { src, captions, sizeLabel, title } = Astro.props;
 ---
 
-<div class="video" data-video-id={videoId} data-video-title={title} data-reveal>
+<div
+  class="video"
+  data-video-src={src}
+  data-video-captions={captions}
+  data-video-title={title}
+  data-reveal
+>
   <button type="button" class="poster" aria-label={`Play video: ${title}`}>
     <Image
       src={poster}
@@ -27,21 +37,36 @@ const watchUrl = `https://www.youtube.com/watch?v=${videoId}`;
       <span class="spinner"></span>
     </span>
   </button>
-  <p class="fallback">
-    Video not loading?{" "}
-    <a href={watchUrl} rel="noopener noreferrer" target="_blank">
-      Watch on YouTube
+  <p class="fallback" role="status">
+    <span class="error-text">The video couldn't load.</span>
+    <span class="hint-text">Video not playing?</span>{" "}
+    <a href={src} download>
+      Download the video ({sizeLabel})
     </a>
   </p>
 </div>
 
 <script>
-  // Click-to-load: the YouTube player (≈500 KB) is only fetched when asked for,
-  // from the privacy-enhanced nocookie domain.
-  document.querySelectorAll<HTMLElement>(".video[data-video-id]").forEach((root) => {
+  // Click-to-load: the ~39 MB MP4 is only requested once a visitor asks for it,
+  // so the page itself stays as light as before.
+  document.querySelectorAll<HTMLElement>(".video[data-video-src]").forEach((root) => {
     const button = root.querySelector<HTMLButtonElement>(".poster");
-    const { videoId, videoTitle } = root.dataset;
-    if (!button || !videoId) return;
+    const { videoSrc, videoCaptions, videoTitle } = root.dataset;
+    if (!button || !videoSrc) return;
+
+    const reveal = (video: HTMLVideoElement) => {
+      if (root.dataset["state"] === "playing") return;
+      root.dataset["state"] = "playing";
+      button.remove();
+      video.focus();
+    };
+
+    const fail = () => {
+      root.dataset["state"] = "error";
+      root.querySelector("video.player")?.remove();
+      button.removeAttribute("aria-busy");
+      button.disabled = true;
+    };
 
     button.addEventListener(
       "click",
@@ -49,18 +74,42 @@ const watchUrl = `https://www.youtube.com/watch?v=${videoId}`;
         root.dataset["state"] = "loading";
         button.setAttribute("aria-busy", "true");
 
-        const iframe = document.createElement("iframe");
-        iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`;
-        iframe.title = videoTitle ?? "Video";
-        iframe.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
-        iframe.referrerPolicy = "strict-origin-when-cross-origin";
-        iframe.className = "player";
-        iframe.addEventListener("load", () => {
-          root.dataset["state"] = "playing";
-          button.remove();
-          iframe.focus();
+        const video = document.createElement("video");
+        video.className = "player";
+        video.controls = true;
+        video.playsInline = true;
+        video.preload = "auto";
+        video.setAttribute("aria-label", videoTitle ?? "Video");
+
+        const source = document.createElement("source");
+        source.src = videoSrc;
+        source.type = "video/mp4";
+        // A failed <source> fires "error" on the source element, not the video.
+        source.addEventListener("error", fail);
+        video.append(source);
+
+        if (videoCaptions) {
+          const track = document.createElement("track");
+          track.kind = "captions";
+          track.srclang = "en";
+          track.label = "English";
+          track.src = videoCaptions;
+          track.default = true;
+          video.append(track);
+          // WebKit ignores `default` on captions unless the viewer enabled captions system-wide;
+          // switch them on explicitly so every browser matches. The CC control still turns them off.
+          track.track.mode = "showing";
+        }
+
+        video.addEventListener("playing", () => reveal(video), { once: true });
+        root.prepend(video);
+        // The click is a user gesture, so playback with sound is allowed. If the browser still
+        // refuses (e.g. iOS Low Power Mode), show the player so its own controls can start it.
+        video.play().catch((err: unknown) => {
+          const blocked = err instanceof DOMException && err.name === "NotAllowedError";
+          if (blocked) reveal(video);
+          else fail();
         });
-        root.prepend(iframe);
       },
       { once: true },
     );
@@ -82,6 +131,18 @@ const watchUrl = `https://www.youtube.com/watch?v=${videoId}`;
     border: 0;
     border-radius: var(--radius-media);
     box-shadow: var(--shadow-media);
+  }
+
+  /* The film is 16:9; letterbox it inside the 16:10 frame so the layout never shifts. */
+  .video :global(video.player) {
+    block-size: auto;
+    object-fit: contain;
+    background: var(--brand-navy-deep);
+  }
+
+  .video :global(video.player:focus-visible) {
+    outline: 3px solid var(--brand-lime);
+    outline-offset: 3px;
   }
 
   .poster {
@@ -165,5 +226,24 @@ const watchUrl = `https://www.youtube.com/watch?v=${videoId}`;
   .fallback {
     font-size: var(--step--1);
     color: var(--ink-muted);
+  }
+
+  .error-text {
+    display: none;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .video[data-state="error"] .error-text {
+    display: inline;
+  }
+
+  .video[data-state="error"] .hint-text,
+  .video[data-state="error"] .play {
+    display: none;
+  }
+
+  .poster:disabled {
+    cursor: default;
   }
 </style>

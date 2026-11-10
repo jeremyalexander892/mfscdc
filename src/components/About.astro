@@ -5,7 +5,12 @@ import { SITE } from "../content/site";
 
 <section id="about" class="section" aria-labelledby="about-title">
   <div class="container split">
-    <VideoPoster videoId={SITE.videoId} title="Learn more about Miles For Smiles" />
+    <VideoPoster
+      src={SITE.video.src}
+      captions={SITE.video.captions}
+      sizeLabel={SITE.video.sizeLabel}
+      title="Learn more about Miles For Smiles"
+    />
     <div class="stack" data-reveal>
       <p class="eyebrow">About Miles For Smiles</p>
       <h2 id="about-title" class="section-title">

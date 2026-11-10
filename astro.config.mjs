@@ -19,7 +19,7 @@ const toolbarCsp = isVercelPreview
         "img-src 'self' data: blob: https://vercel.live https://vercel.com",
         "font-src 'self' https://vercel.live https://assets.vercel.com",
         "connect-src 'self' https://vercel.live wss://ws-us3.pusher.com",
-        "frame-src https://www.youtube-nocookie.com https://vercel.live",
+        "frame-src https://vercel.live",
       ]),
       scriptResources: ["'self'", "https://vercel.live"],
       styleResources: ["'self'", "https://vercel.live", "'unsafe-inline'"],
@@ -41,18 +41,19 @@ export default defineConfig({
   markdown: { syntaxHighlight: false },
   // Content Security Policy as a <meta> tag, so it travels with the HTML on any
   // host. Astro hashes its own inline scripts and styles into script-src and
-  // style-src; everything else is locked to this origin, except the YouTube
-  // player, which loads only after a visitor clicks play.
+  // style-src; everything else, including the self-hosted video and its
+  // captions, is locked to this origin.
   security: {
     csp: {
       directives: [
         "default-src 'self'",
+        "media-src 'self'",
         ...(toolbarCsp?.directives ??
           /** @type {const} */ ([
             "img-src 'self' data:",
             "font-src 'self'",
             "connect-src 'self'",
-            "frame-src https://www.youtube-nocookie.com",
+            "frame-src 'none'",
           ])),
         "base-uri 'self'",
         "form-action 'self'",

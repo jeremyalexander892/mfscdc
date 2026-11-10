@@ -77,12 +77,65 @@ test.describe("home page", () => {
     }
   });
 
-  test("video loads only after the poster is activated", async ({ page }) => {
-    await expect(page.locator("iframe")).toHaveCount(0);
+  test("video is fetched only after the poster is activated, with captions on", async ({
+    page,
+  }) => {
+    const videoRequests: string[] = [];
+    page.on("request", (req) => {
+      if (req.url().includes("/video/")) videoRequests.push(req.url());
+    });
+    await page.locator("#about").scrollIntoViewIfNeeded();
+    await expect(page.locator("video")).toHaveCount(0);
+    expect(videoRequests).toEqual([]);
+
+    const canPlay = await page.evaluate(() =>
+      document.createElement("video").canPlayType('video/mp4; codecs="avc1.640029, mp4a.40.2"'),
+    );
     await page.getByRole("button", { name: /Play video/ }).click();
-    const iframe = page.locator("iframe.player");
-    await expect(iframe).toHaveCount(1);
-    await expect(iframe).toHaveAttribute("src", /youtube-nocookie\.com\/embed\/HMW4FPLxFpE/);
+    const root = page.locator(".video");
+
+    if (!canPlay) {
+      // This browser build has no H.264 decoder: the visitor gets the download link instead.
+      await expect(root).toHaveAttribute("data-state", "error");
+      await expect(page.getByRole("link", { name: /Download the video/ })).toBeVisible();
+      return;
+    }
+
+    await expect(root).toHaveAttribute("data-state", "playing");
+    const video = page.locator("video.player");
+    await expect(video.locator("source")).toHaveAttribute("src", "/video/miles-for-smiles.mp4");
+    await expect(video).toHaveJSProperty("controls", true);
+    await expect
+      .poll(() => video.evaluate((v: HTMLVideoElement) => v.textTracks[0]?.mode))
+      .toBe("showing");
+    await expect
+      .poll(() => video.evaluate((v: HTMLVideoElement) => v.currentTime))
+      .toBeGreaterThan(0);
+  });
+
+  test("video failure shows an error and a download link", async ({ page }) => {
+    await page.route("**/video/miles-for-smiles.mp4", (route) => route.fulfill({ status: 404 }));
+    await page.locator("#about").scrollIntoViewIfNeeded();
+    const button = page.getByRole("button", { name: /Play video/ });
+    await button.click();
+
+    await expect(page.locator(".video")).toHaveAttribute("data-state", "error");
+    await expect(page.getByText("The video couldn't load.")).toBeVisible();
+    await expect(page.getByRole("link", { name: /Download the video/ })).toHaveAttribute(
+      "href",
+      "/video/miles-for-smiles.mp4",
+    );
+    await expect(button).toBeDisabled();
+    await expect(page.locator("video")).toHaveCount(0);
+  });
+
+  test("serves the captions file", async ({ request }) => {
+    const res = await request.get("/video/miles-for-smiles.en.vtt");
+    expect(res.status()).toBe(200);
+    const body = await res.text();
+    expect(body.startsWith("WEBVTT")).toBe(true);
+    expect(body).toContain("Miles For Smiles provides");
+    expect(body.toLowerCase()).not.toContain("russ");
   });
 
   test("has no detectable accessibility violations", async ({ page }) => {

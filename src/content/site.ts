@@ -30,7 +30,12 @@ export const SITE = {
     opens: "08:00",
     closes: "16:00",
   },
-  videoId: "HMW4FPLxFpE",
+  // Self-hosted from public/video: H.264/AAC MP4 (faststart) plus English WebVTT captions.
+  video: {
+    src: "/video/miles-for-smiles.mp4",
+    captions: "/video/miles-for-smiles.en.vtt",
+    sizeLabel: "MP4, 39 MB",
+  },
   social: [
     { network: "facebook", label: "Facebook", href: "https://www.facebook.com/milesforsmiles318/" },
     {

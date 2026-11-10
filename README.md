@@ -95,11 +95,15 @@ for body text, and **Yellowtail** for at most one script word per view.
 - **Scroll effects in CSS only.** The header turns solid and sections reveal using scroll-driven
   animations. Browsers without support, such as Firefox, get the static version. Visitors who
   prefer reduced motion get no motion.
-- **Click-to-load video.** The YouTube player loads from `youtube-nocookie.com` only after a click.
+- **Self-hosted, click-to-load video.** `public/video/` holds an H.264/AAC MP4 (metadata at the
+  front, so it starts playing while it downloads) and English WebVTT captions, on by default.
+  Nothing is requested until a visitor presses play. If the file can't play, the player shows an
+  error and a download link. The video's URL and size label live in `src/content/site.ts`.
 - **Images.** Responsive AVIF and WebP with fixed dimensions, so the layout doesn't shift as the
   page loads. The hero photo loads with high priority.
 - **Security.** A Content Security Policy is generated at build time. Astro hashes every inline
-  script and style. Everything else is limited to this origin, except the YouTube player.
+  script and style. Everything else, including the video, is limited to this origin, and no
+  third-party frames are allowed.
 - **SEO.** Canonical URL, Open Graph and Twitter cards with a generated 1200×630 image, sitemap,
   `robots.txt`, structured data and a 404 page.
 
