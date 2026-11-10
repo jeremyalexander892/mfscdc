@@ -61,6 +61,8 @@
     --brand-sky: #aee3f6;
     --surface: #f3f7fb;
     --tile: #e8eef8;
+    /* Pale lime, same as golfingforsmiles --accent. Backs green brand icons. */
+    --accent-tint: #edf6d9;
     --ink: #10233f;
     --ink-muted: #4d5f78;
     --white: #ffffff;
@@ -394,35 +396,45 @@
   }
 
   /*
-   * Scroll reveal with zero JavaScript. Content is fully visible by default;
-   * the animation only applies where scroll-driven animations are supported
-   * and the visitor has not asked for reduced motion.
+   * Scroll reveal, matching golfingforsmiles: a timed 0.7s rise rather than a
+   * scroll-scrubbed one, so it feels smooth at any scroll speed and works in
+   * every browser. Content is visible by default; it only starts hidden when
+   * JavaScript is running (html.js, set inline in the head) AND the visitor
+   * allows motion. reveal.ts flips data-reveal to "revealed" on entry.
+   * --reveal-delay staggers siblings.
    */
-  @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) {
-      [data-reveal] {
-        animation: reveal linear both;
-      }
-
-      /*
-       * Kept in a separate rule on purpose: the CSS minifier otherwise folds
-       * animation-timeline into the animation shorthand, which browsers reject.
-       */
-      :where(html) [data-reveal] {
-        animation-timeline: view();
-        animation-range: entry 0% cover 22%;
-      }
-    }
-  }
-
-  @keyframes reveal {
-    from {
+  @media (prefers-reduced-motion: no-preference) {
+    html.js [data-reveal] {
       opacity: 0;
       translate: 0 24px;
+      transition:
+        opacity 0.7s var(--ease-out),
+        translate 0.7s var(--ease-out);
+      transition-delay: var(--reveal-delay, 0s);
     }
-    to {
+
+    html.js [data-reveal="revealed"] {
       opacity: 1;
       translate: 0 0;
     }
+  }
+
+  /* Staggered children: add .stagger to a grid whose items carry data-reveal. */
+  .stagger > :nth-child(2) {
+    --reveal-delay: 0.1s;
+  }
+  .stagger > :nth-child(3) {
+    --reveal-delay: 0.2s;
+  }
+  .stagger > :nth-child(4) {
+    --reveal-delay: 0.3s;
+  }
+  .stagger > :nth-child(n + 5) {
+    --reveal-delay: 0.4s;
+  }
+
+  /* Pairs in a split layout: the second column follows the first. */
+  .split > [data-reveal] + [data-reveal] {
+    --reveal-delay: 0.15s;
   }
 }

@@ -13,10 +13,12 @@ const pillars = [
   <h2 id="pillars-title" class="visually-hidden">
     What we bring to your facility
   </h2>
-  <ul class="container pillar-grid">
+  <ul class="container pillar-grid stagger">
     {pillars.map(({ icon: Icon, title, text }) => (
-      <li class="pillar">
-        <Icon size={44} stroke-width={1.5} aria-hidden="true" class="pillar-icon" />
+      <li class="pillar" data-reveal>
+        <span class="pillar-badge" aria-hidden="true">
+          <Icon size={30} stroke-width={1.75} class="pillar-icon" />
+        </span>
         <h3 class="pillar-title">{title}</h3>
         <p>{text}</p>
       </li>
@@ -53,8 +55,27 @@ const pillars = [
     }
   }
 
-  .pillar :global(.pillar-icon) {
-    color: var(--brand-navy);
+  /* Green brand icon on a pale-lime disc, echoing the flyer's green icons.
+     Green is 3.87:1 on white, fine for non-text graphics (WCAG 1.4.11). */
+  .pillar-badge {
+    display: grid;
+    place-items: center;
+    inline-size: 4rem;
+    block-size: 4rem;
+    border-radius: 50%;
+    background: var(--accent-tint);
+    color: var(--brand-green);
+    margin-block-end: 0.25rem;
+    transition:
+      background-color var(--duration) var(--ease-out),
+      color var(--duration) var(--ease-out),
+      scale var(--duration) var(--ease-out);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .pillar:hover .pillar-badge {
+      scale: 1.06;
+    }
   }
 
   .pillar-title {

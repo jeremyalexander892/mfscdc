@@ -5,8 +5,8 @@ import insideUnit from "../assets/images/inside-unit.jpeg";
 
 const benefits = [
   {
-    title: "Less escape and contraband risk.",
-    text: "Inmates stay inside your secure facility instead of being transported to an outside clinic.",
+    title: "Fewer transport and security risks.",
+    text: "Patients stay inside your secure facility instead of being transported to an outside clinic.",
   },
   {
     title: "Funds you can reallocate.",
@@ -14,7 +14,7 @@ const benefits = [
   },
   {
     title: "Any size facility.",
-    text: "From the smallest county jail to statewide and federal facilities.",
+    text: "From the smallest county facility to statewide and federal facilities.",
   },
   {
     title: "Dignified care for every population.",
@@ -30,9 +30,9 @@ const benefits = [
       <h2 id="benefits-title" class="section-title">
         Care stays inside your walls. So does your budget.
       </h2>
-      <ul class="checklist">
+      <ul class="checklist stagger">
         {benefits.map((b) => (
-          <li>
+          <li data-reveal>
             <Check size={20} stroke-width={2.25} aria-hidden="true" class="check" />
             <span>
               <strong>{b.title}</strong> {b.text}

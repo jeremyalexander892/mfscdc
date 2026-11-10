@@ -12,7 +12,7 @@ const { videoId, title } = Astro.props;
 const watchUrl = `https://www.youtube.com/watch?v=${videoId}`;
 ---
 
-<div class="video" data-video-id={videoId} data-video-title={title}>
+<div class="video" data-video-id={videoId} data-video-title={title} data-reveal>
   <button type="button" class="poster" aria-label={`Play video: ${title}`}>
     <Image
       src={poster}

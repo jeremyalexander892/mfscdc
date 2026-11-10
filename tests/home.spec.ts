@@ -86,6 +86,10 @@ test.describe("home page", () => {
   });
 
   test("has no detectable accessibility violations", async ({ page }) => {
+    // Check the settled design, not a frame mid-fade: reduced motion renders
+    // every element at its final opacity immediately.
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.reload();
     const results = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
       .analyze();
@@ -114,6 +118,28 @@ test.describe("home page", () => {
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
     expect(overflow).toBeLessThanOrEqual(0);
+  });
+});
+
+test.describe("motion", () => {
+  test("reveals sections as they scroll into view", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.goto("/");
+    const target = page.locator("#locations-title").locator("xpath=ancestor::*[@data-reveal][1]");
+    await expect(target).toHaveAttribute("data-reveal", "");
+    await expect(target).toHaveCSS("opacity", "0");
+    await target.scrollIntoViewIfNeeded();
+    await expect(target).toHaveAttribute("data-reveal", "revealed");
+    await expect(target).toHaveCSS("opacity", "1");
+  });
+
+  test("shows everything immediately with reduced motion", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+    const opacities = await page
+      .locator("[data-reveal], .hero-content > *")
+      .evaluateAll((els) => els.map((el) => getComputedStyle(el).opacity));
+    expect(opacities.every((o) => o === "1")).toBe(true);
   });
 });
 

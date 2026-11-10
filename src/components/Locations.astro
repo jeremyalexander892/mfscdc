@@ -13,7 +13,7 @@ import { OFFICES, SITE } from "../content/site";
       <p class="lede">{SITE.hours}. Emergency and same-day services available.</p>
     </header>
 
-    <div class="grid">
+    <div class="grid stagger">
       {OFFICES.map((office) => (
         <article class="office crown" aria-labelledby={`office-${office.id}`} data-reveal>
           <h3 id={`office-${office.id}`}>{office.state}</h3>
