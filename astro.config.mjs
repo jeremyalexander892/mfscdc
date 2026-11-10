@@ -15,12 +15,12 @@ const siteUrl = isVercelPreview && branchUrl ? `https://${branchUrl}` : PRODUCTI
 
 const toolbarCsp = isVercelPreview
   ? {
-      directives: [
+      directives: /** @type {const} */ ([
         "img-src 'self' data: blob: https://vercel.live https://vercel.com",
         "font-src 'self' https://vercel.live https://assets.vercel.com",
         "connect-src 'self' https://vercel.live wss://ws-us3.pusher.com",
         "frame-src https://www.youtube-nocookie.com https://vercel.live",
-      ],
+      ]),
       scriptResources: ["'self'", "https://vercel.live"],
       styleResources: ["'self'", "https://vercel.live", "'unsafe-inline'"],
     }
@@ -47,12 +47,13 @@ export default defineConfig({
     csp: {
       directives: [
         "default-src 'self'",
-        ...(toolbarCsp?.directives ?? [
-          "img-src 'self' data:",
-          "font-src 'self'",
-          "connect-src 'self'",
-          "frame-src https://www.youtube-nocookie.com",
-        ]),
+        ...(toolbarCsp?.directives ??
+          /** @type {const} */ ([
+            "img-src 'self' data:",
+            "font-src 'self'",
+            "connect-src 'self'",
+            "frame-src https://www.youtube-nocookie.com",
+          ])),
         "base-uri 'self'",
         "form-action 'self'",
         "object-src 'none'",
