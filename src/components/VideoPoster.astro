@@ -31,8 +31,8 @@ const { src, srcSd, captions, sizeLabel, title } = Astro.props;
     <Image
       src={poster}
       alt=""
-      widths={[480, 720, 960, 1280]}
-      sizes="(min-width: 64rem) 34rem, 100vw"
+      widths={[400, 560, 720, 960, 1120]}
+      sizes="(min-width: 75rem) 34.5rem, (min-width: 64rem) calc(50vw - 3rem), calc(100vw - 2rem)"
       class="poster-img"
     />
     <span class="poster-scrim" aria-hidden="true"></span>
