@@ -16,19 +16,29 @@ import { OFFICES, SITE } from "../content/site";
     <div class="grid stagger">
       {OFFICES.map((office) => (
         <article class="office crown" aria-labelledby={`office-${office.id}`} data-reveal>
-          <h3 id={`office-${office.id}`}>{office.state}</h3>
-          <a href={office.phoneHref} class="phone">
-            <Phone size={20} aria-hidden="true" class="icon" />
-            {office.phone}
-          </a>
-          <address>
-            <MapPin size={20} aria-hidden="true" class="icon" />
-            <span>
-              {office.street}
-              <br />
-              {office.city}, {office.stateCode} {office.postalCode}
-            </span>
-          </address>
+          <h3 id={`office-${office.id}`}>{office.name}</h3>
+          {office.phone && (
+            <a href={office.phone.href} class="phone">
+              <Phone size={20} aria-hidden="true" class="icon" />
+              {office.phone.display}
+            </a>
+          )}
+          {office.address && (
+            <address>
+              <MapPin size={20} aria-hidden="true" class="icon" />
+              <span>
+                {office.address.building && (
+                  <>
+                    {office.address.building}
+                    <br />
+                  </>
+                )}
+                {office.address.street}
+                <br />
+                {office.address.city}, {office.address.stateCode} {office.address.postalCode}
+              </span>
+            </address>
+          )}
         </article>
       ))}
 

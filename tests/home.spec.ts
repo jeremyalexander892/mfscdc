@@ -7,6 +7,30 @@ const SD_VIDEO = "/video/miles-for-smiles-720p.mp4";
 const expectedVideoSrc = (page: Page) =>
   (page.viewportSize()?.width ?? 0) >= 1280 ? HD_VIDEO : SD_VIDEO;
 
+// Written out independently of src/content/site.ts so a typo there fails a test.
+const LOCATIONS = [
+  {
+    name: "North Louisiana",
+    tel: "tel:+13183172800",
+    phone: "(318) 317-2800",
+    address: ["3226 Mackey Lane", "Shreveport, LA 71118"],
+  },
+  {
+    name: "South Louisiana",
+    tel: "tel:+12252304707",
+    phone: "(225) 230-4707",
+    address: ["2314 Weymouth Dr #A", "Baton Rouge, LA 70809"],
+  },
+  { name: "Texas", tel: "tel:+19728052900", phone: "(972) 805-2900", address: [] },
+  {
+    name: "Georgia",
+    tel: "tel:+17709336929",
+    phone: "(770) 933-6929",
+    address: ["City View", "3330 Cumberland Blvd, Suite 500", "Atlanta, GA 30339"],
+  },
+] as const;
+const REMOVED_DALLAS_ADDRESS = "3704 W. Camp Wisdom Road";
+
 test.describe("home page", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
@@ -25,24 +49,65 @@ test.describe("home page", () => {
     }
   });
 
-  test("lists both offices with working phone links", async ({ page }) => {
-    const contact = page.locator("#contact");
-    await expect(contact.getByRole("heading", { name: "Louisiana" })).toBeVisible();
-    await expect(contact.getByRole("heading", { name: "Texas" })).toBeVisible();
-    await expect(contact.locator('a[href="tel:+13183172800"]')).toBeVisible();
-    await expect(contact.locator('a[href="tel:+19728052900"]')).toBeVisible();
-    await expect(contact.getByText("3226 Mackey Lane")).toBeVisible();
-    await expect(contact.getByText("3704 W. Camp Wisdom Road, #120")).toBeVisible();
+  for (const [label, scope] of [
+    ["Locations section", "#contact"],
+    ["footer", "footer"],
+  ] as const) {
+    test(`${label} lists every location with working phone links`, async ({ page }) => {
+      const region = page.locator(scope);
+      for (const loc of LOCATIONS) {
+        await expect(region.getByRole("heading", { name: loc.name, exact: true })).toBeVisible();
+        await expect(region.locator(`a[href="${loc.tel}"]`)).toHaveText(loc.phone);
+        for (const line of loc.address) await expect(region.getByText(line)).toBeVisible();
+      }
+      await expect(region.getByText(REMOVED_DALLAS_ADDRESS)).toHaveCount(0);
+      // Texas is listed by phone only.
+      const texas = region.locator("section, article").filter({
+        has: page.getByRole("heading", { name: "Texas", exact: true }),
+      });
+      await expect(texas.locator("address")).toHaveCount(0);
+    });
+  }
+
+  test("states served, years and records step are current", async ({ page }) => {
+    await expect(page.locator("#top")).toContainText("Louisiana, Texas & Georgia");
+    await expect(page.locator("footer")).toContainText("in Louisiana, Texas and Georgia.");
+    await expect(page.getByText("20+ years")).toBeVisible();
+    await expect(page.getByText("16+ years")).toHaveCount(0);
+    await expect(
+      page.getByRole("heading", { name: "Step 4: Electronic health records" }),
+    ).toBeVisible();
   });
 
-  test("footer lists both offices, email and hours", async ({ page }) => {
+  test("structured data matches the listed locations", async ({ page }) => {
+    const json = await page.locator('script[type="application/ld+json"]').textContent();
+    const graph = (JSON.parse(json ?? "{}") as { "@graph": Record<string, unknown>[] })["@graph"];
+    const places = graph.filter((n) => n["@type"] === "Dentist");
+    expect(places.map((p) => p["name"])).toEqual([
+      "Miles For Smiles (North Louisiana)",
+      "Miles For Smiles (South Louisiana)",
+      "Miles For Smiles (Georgia)",
+    ]);
+    expect(json).not.toContain(REMOVED_DALLAS_ADDRESS);
+    const org = graph.find((n) => n["@type"] === "MedicalOrganization");
+    expect(org?.["contactPoint"]).toEqual([
+      expect.objectContaining({ telephone: "(972) 805-2900", areaServed: "Texas" }),
+    ]);
+    expect(org?.["areaServed"]).toEqual(
+      ["Louisiana", "Texas", "Georgia"].map((name) => ({ "@type": "State", name })),
+    );
+  });
+
+  test("phone call bar offers North and South Louisiana", async ({ page, isMobile }) => {
+    test.skip(!isMobile, "The call bar is only shown on narrow screens");
+    const bar = page.getByRole("navigation", { name: "Call an office" });
+    await expect(bar.getByRole("link")).toHaveText(["Call North LA", "Call South LA"]);
+    await expect(bar.getByRole("link").first()).toHaveAttribute("href", "tel:+13183172800");
+    await expect(bar.getByRole("link").last()).toHaveAttribute("href", "tel:+12252304707");
+  });
+
+  test("footer lists email, hours and social links", async ({ page }) => {
     const footer = page.locator("footer");
-    await expect(footer.getByRole("heading", { name: "Louisiana" })).toBeVisible();
-    await expect(footer.getByRole("heading", { name: "Texas" })).toBeVisible();
-    await expect(footer.locator('a[href="tel:+13183172800"]')).toHaveText("(318) 317-2800");
-    await expect(footer.locator('a[href="tel:+19728052900"]')).toHaveText("(972) 805-2900");
-    await expect(footer.getByText("3226 Mackey Lane")).toBeVisible();
-    await expect(footer.getByText("3704 W. Camp Wisdom Road, #120")).toBeVisible();
     await expect(footer.getByRole("link", { name: "doc@milesforsmiles.com" })).toBeVisible();
     await expect(footer.getByText("Monday to Friday, 8am to 4pm")).toBeVisible();
     await expect(footer.getByRole("link", { name: /Facebook/ })).toHaveAttribute(
@@ -289,7 +354,8 @@ test.describe("mobile menu", () => {
   });
 });
 
-test("unknown routes show the 404 page", async ({ page }) => {
+test("unknown routes show the 404 page with every office's number", async ({ page }) => {
   await page.goto("/does-not-exist");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("We couldn't find that page.");
+  for (const loc of LOCATIONS) await expect(page.locator(`a[href="${loc.tel}"]`)).toHaveCount(1);
 });

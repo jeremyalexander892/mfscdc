@@ -1,7 +1,7 @@
 # Miles For Smiles: mfscdc.com
 
 Marketing site for **Miles For Smiles**, mobile dental care for correctional facilities in
-Louisiana and Texas.
+Louisiana, Texas and Georgia.
 
 It is a static [Astro](https://astro.build) site. Pages are plain HTML and CSS with no client
 framework. The only browser JavaScript is two small scripts: the mobile menu and the

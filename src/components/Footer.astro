@@ -3,7 +3,7 @@ import { Image } from "astro:assets";
 import { Clock, Mail, MapPin, Phone } from "@lucide/astro";
 import logo from "../assets/images/logo-white.png";
 import SocialIcon from "./SocialIcon.astro";
-import { OFFICES, SITE } from "../content/site";
+import { AREA_SERVED_TEXT, OFFICES, SITE } from "../content/site";
 
 const year = new Date().getFullYear();
 ---
@@ -12,28 +12,42 @@ const year = new Date().getFullYear();
   <div class="container grid">
     <div class="brand">
       <Image src={logo} densities={[1, 2]} alt="Miles For Smiles" height={40} class="logo" />
-      <p class="tagline">{SITE.tagline} in Louisiana and Texas.</p>
+      <p class="tagline">
+        {SITE.tagline} in {AREA_SERVED_TEXT}.
+      </p>
     </div>
 
-    {OFFICES.map((office) => (
-      <section class="col" aria-labelledby={`footer-${office.id}`}>
-        <h2 id={`footer-${office.id}`} class="col-title">
-          {office.state}
-        </h2>
-        <a href={office.phoneHref} class="phone">
-          <Phone size={18} aria-hidden="true" class="icon" />
-          {office.phone}
-        </a>
-        <address>
-          <MapPin size={18} aria-hidden="true" class="icon" />
-          <span>
-            {office.street}
-            <br />
-            {office.city}, {office.stateCode} {office.postalCode}
-          </span>
-        </address>
-      </section>
-    ))}
+    <div class="offices">
+      {OFFICES.map((office) => (
+        <section class="col" aria-labelledby={`footer-${office.id}`}>
+          <h2 id={`footer-${office.id}`} class="col-title">
+            {office.name}
+          </h2>
+          {office.phone && (
+            <a href={office.phone.href} class="phone">
+              <Phone size={18} aria-hidden="true" class="icon" />
+              {office.phone.display}
+            </a>
+          )}
+          {office.address && (
+            <address>
+              <MapPin size={18} aria-hidden="true" class="icon" />
+              <span>
+                {office.address.building && (
+                  <>
+                    {office.address.building}
+                    <br />
+                  </>
+                )}
+                {office.address.street}
+                <br />
+                {office.address.city}, {office.address.stateCode} {office.address.postalCode}
+              </span>
+            </address>
+          )}
+        </section>
+      ))}
+    </div>
 
     <section class="col" aria-labelledby="footer-contact">
       <h2 id="footer-contact" class="col-title">
@@ -89,12 +103,23 @@ const year = new Date().getFullYear();
     gap: var(--space-l) var(--space-xl);
   }
 
-  /* On wide screens the contact columns size to their content, so addresses
-     keep their natural line breaks, and the brand column takes what is left. */
+  /* Narrow screens: each location is its own column in the wrapping grid. */
+  .offices {
+    display: contents;
+  }
+
+  /* On wide screens the locations form a 2x2 block that sizes to its content, so
+     addresses keep their natural line breaks, and the brand column takes what is left. */
   @media (min-width: 64rem) {
     .grid {
-      grid-template-columns: minmax(0, 1fr) repeat(3, auto);
+      grid-template-columns: minmax(0, 1fr) auto auto;
       column-gap: clamp(var(--space-l), 4vw, 4rem);
+    }
+
+    .offices {
+      display: grid;
+      grid-template-columns: repeat(2, auto);
+      gap: var(--space-l) clamp(var(--space-l), 4vw, 4rem);
     }
   }
 

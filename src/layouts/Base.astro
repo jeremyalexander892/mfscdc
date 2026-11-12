@@ -28,31 +28,45 @@ const structuredData = {
       description: SITE.description,
       medicalSpecialty: "Dentistry",
       sameAs: SITE.social.map((s) => s.href),
+      areaServed: SITE.areaServed.map((name) => ({ "@type": "State", name })),
+      // Phone-only locations (no street address) are contact points, not places.
+      contactPoint: OFFICES.filter((o) => o.phone && !o.address).map((o) => ({
+        "@type": "ContactPoint",
+        telephone: o.phone?.display,
+        contactType: "customer service",
+        areaServed: o.name,
+      })),
     },
-    ...OFFICES.map((office) => ({
-      "@type": "Dentist",
-      "@id": `${SITE.url}/#office-${office.id}`,
-      name: `${SITE.name} (${office.state})`,
-      parentOrganization: { "@id": organizationId },
-      telephone: office.phone,
-      email: SITE.email,
-      url: SITE.url,
-      image: ogImageUrl.href,
-      address: {
-        "@type": "PostalAddress",
-        streetAddress: office.street,
-        addressLocality: office.city,
-        addressRegion: office.stateCode,
-        postalCode: office.postalCode,
-        addressCountry: "US",
-      },
-      openingHoursSpecification: {
-        "@type": "OpeningHoursSpecification",
-        dayOfWeek: SITE.hoursSpec.days,
-        opens: SITE.hoursSpec.opens,
-        closes: SITE.hoursSpec.closes,
-      },
-    })),
+    ...OFFICES.flatMap((office) => {
+      const { address } = office;
+      if (!address) return [];
+      return [
+        {
+          "@type": "Dentist",
+          "@id": `${SITE.url}/#office-${office.id}`,
+          name: `${SITE.name} (${office.name})`,
+          parentOrganization: { "@id": organizationId },
+          ...(office.phone && { telephone: office.phone.display }),
+          email: SITE.email,
+          url: SITE.url,
+          image: ogImageUrl.href,
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: [address.building, address.street].filter(Boolean).join(", "),
+            addressLocality: address.city,
+            addressRegion: address.stateCode,
+            postalCode: address.postalCode,
+            addressCountry: "US",
+          },
+          openingHoursSpecification: {
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: SITE.hoursSpec.days,
+            opens: SITE.hoursSpec.opens,
+            closes: SITE.hoursSpec.closes,
+          },
+        },
+      ];
+    }),
   ],
 };
 ---

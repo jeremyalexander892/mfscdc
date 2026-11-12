@@ -1,13 +1,16 @@
 ---
 import { Phone } from "@lucide/astro";
-import { OFFICES } from "../content/site";
+import { CALLABLE_OFFICES } from "../content/site";
+
+// Two buttons stay readable on the narrowest phones; other numbers are in Locations.
+const barOffices = CALLABLE_OFFICES.filter((office) => office.inCallBar);
 ---
 
 <nav class="call-bar on-dark" aria-label="Call an office">
-  {OFFICES.map((office, i) => (
-    <a href={office.phoneHref} class:list={["btn", i === 0 ? "btn--primary" : "btn--ghost-dark"]}>
+  {barOffices.map((office, i) => (
+    <a href={office.phone.href} class:list={["btn", i === 0 ? "btn--primary" : "btn--ghost-dark"]}>
       <Phone size={18} aria-hidden="true" />
-      Call {office.state}
+      Call {office.shortName}
     </a>
   ))}
 </nav>

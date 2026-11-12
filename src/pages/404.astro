@@ -1,6 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
-import { OFFICES } from "../content/site";
+import { CALLABLE_OFFICES } from "../content/site";
 ---
 
 <Base title="Page not found | Miles For Smiles" description="This page could not be found.">
@@ -13,9 +13,9 @@ import { OFFICES } from "../content/site";
         <a href="/" class="btn btn--primary">
           Back to the home page
         </a>
-        {OFFICES.map((office) => (
-          <a href={office.phoneHref} class="btn btn--ghost-dark">
-            Call {office.state}
+        {CALLABLE_OFFICES.map((office) => (
+          <a href={office.phone.href} class="btn btn--ghost-dark">
+            Call {office.shortName}
           </a>
         ))}
       </div>

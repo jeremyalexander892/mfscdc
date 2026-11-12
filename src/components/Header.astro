@@ -2,7 +2,7 @@
 import { Image } from "astro:assets";
 import { Menu, Phone, X } from "@lucide/astro";
 import logo from "../assets/images/logo-white.png";
-import { NAV, OFFICES } from "../content/site";
+import { CALLABLE_OFFICES, NAV } from "../content/site";
 ---
 
 <header class="site-header on-dark">
@@ -66,10 +66,10 @@ import { NAV, OFFICES } from "../content/site";
     <a href="#contact" class="btn btn--primary">
       Request a consultation
     </a>
-    {OFFICES.map((office) => (
-      <a href={office.phoneHref} class="btn btn--ghost-dark">
+    {CALLABLE_OFFICES.map((office) => (
+      <a href={office.phone.href} class="btn btn--ghost-dark">
         <Phone size={18} aria-hidden="true" />
-        Call {office.state}
+        Call {office.shortName}
       </a>
     ))}
   </div>
