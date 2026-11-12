@@ -39,7 +39,10 @@ test.describe("home page", () => {
   test("has one h1 and the core value proposition", async ({ page }) => {
     await expect(page.locator("h1")).toHaveCount(1);
     await expect(page.getByRole("heading", { level: 1 })).toContainText("inside your facility");
-    await expect(page).toHaveTitle(/Miles For Smiles/);
+    // The title (and og:title) names every state served, matching SITE.areaServed.
+    await expect(page).toHaveTitle(
+      "Correctional Facility Dental Care in LA, TX & GA | Miles For Smiles",
+    );
   });
 
   test("contains no COVID-era content", async ({ page }) => {
