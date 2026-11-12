@@ -1,0 +1,235 @@
+---
+import { Picture } from "astro:assets";
+import { ArrowDown, ArrowRight, Phone, ShieldCheck } from "@lucide/astro";
+import heroImage from "../assets/images/team-unit.jpeg";
+---
+
+<section id="top" class="hero on-dark" aria-labelledby="hero-title">
+  <Picture
+    src={heroImage}
+    alt=""
+    formats={["avif", "webp"]}
+    widths={[640, 828, 1080, 1280, 1440, 1920, 2560]}
+    sizes="100vw"
+    loading="eager"
+    fetchpriority="high"
+    class="hero-media"
+  />
+  <div class="hero-scrim" aria-hidden="true"></div>
+  <div class="hero-masthead" aria-hidden="true"></div>
+
+  <div class="container hero-content">
+    <p class="eyebrow hero-eyebrow">
+      <ShieldCheck size={16} aria-hidden="true" />
+      <span class="nowrap">Correctional dental care ·</span>
+      <span class="nowrap">Louisiana, Texas &amp; Georgia</span>
+    </p>
+    <h1 id="hero-title" class="hero-title">
+      Dental care, <span class="script">delivered</span> inside your facility.
+    </h1>
+    <p class="hero-lede">
+      A self-contained mobile clinic that treats adult and juvenile populations on site. No
+      transport, no added security risk, no lost staff hours.
+    </p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn btn--primary btn--elevated">
+        Request a facility consultation
+        <ArrowRight size={18} aria-hidden="true" class="icon-trailing" />
+      </a>
+      <a href="#contact" class="text-link">
+        <Phone size={18} aria-hidden="true" />
+        Call an office
+        <ArrowDown size={16} aria-hidden="true" />
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--brand-navy-deep);
+    min-block-size: min(92svh, 56rem);
+    display: grid;
+    align-items: center;
+  }
+
+  /* Astro puts the class on the <img>; the <picture> wrapper must leave the grid flow too. */
+  .hero > :global(picture) {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+
+  .hero :global(.hero-media) {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    object-position: 65% 50%;
+  }
+
+  /*
+   * The photo is bright on the left where the copy sits, so contrast has to
+   * come from the scrim, not the image. Phones get a vertical wash because the
+   * copy spans the full width there.
+   */
+  .hero-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+      180deg,
+      rgb(4 22 80 / 0.9) 0%,
+      rgb(4 22 80 / 0.82) 50%,
+      rgb(4 22 80 / 0.7) 78%,
+      rgb(4 22 80 / 0.64) 100%
+    );
+  }
+
+  @media (min-width: 64rem) {
+    .hero-scrim {
+      /*
+       * Stops are measured from the text column (--copy-start), not the
+       * screen width: the overlay stays dark behind the copy, then falls off
+       * fast so the team's faces read clearly.
+       */
+      --copy-start: max(var(--gutter), 50% - var(--container) / 2);
+      background: linear-gradient(
+        90deg,
+        rgb(4 22 80 / 0.94) 0%,
+        rgb(4 22 80 / 0.88) calc(var(--copy-start) + 34rem),
+        rgb(4 26 86 / 0.66) calc(var(--copy-start) + 41rem),
+        rgb(5 32 92 / 0.36) calc(var(--copy-start) + 48rem),
+        rgb(6 40 102 / 0.14) calc(var(--copy-start) + 55rem),
+        rgb(7 46 110 / 0.04) calc(var(--copy-start) + 64rem),
+        rgb(7 46 110 / 0.02) 100%
+      );
+    }
+  }
+
+  /* Seats the transparent header: the photo's top edge is bright (the van),
+     so the nav links get a navy band behind them, as on golfingforsmiles. */
+  .hero-masthead {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: 0;
+    block-size: 10rem;
+    z-index: -1;
+    background: linear-gradient(180deg, rgb(4 22 80 / 0.8) 0%, rgb(4 22 80 / 0) 100%);
+  }
+
+  .hero-content {
+    padding-block: calc(var(--header-h) + var(--space-2xl)) var(--space-2xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+    max-inline-size: var(--container);
+  }
+
+  .hero-content > * {
+    max-inline-size: 44rem;
+  }
+
+  .hero-eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 0.5em;
+  }
+
+  .nowrap {
+    white-space: nowrap;
+  }
+
+  .hero-title {
+    font-size: var(--step-4);
+    line-height: 1.04;
+    letter-spacing: -0.015em;
+  }
+
+  .hero-lede {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: rgb(255 255 255 / 0.9);
+    max-inline-size: 36rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    padding-block-start: var(--space-2xs);
+  }
+
+  @media (max-width: 30rem) {
+    .hero-actions :global(.btn) {
+      inline-size: 100%;
+    }
+  }
+
+  /*
+   * Entrance, matching golfingforsmiles: each line rises in on a short stagger.
+   * Gated on JS and motion preference like the scroll reveals.
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js) .hero-content > * {
+      animation: hero-intro 0.8s var(--ease-out) both;
+    }
+    :global(html.js) .hero-content > :nth-child(2) {
+      animation-delay: 0.08s;
+    }
+    :global(html.js) .hero-content > :nth-child(3) {
+      animation-delay: 0.16s;
+    }
+    :global(html.js) .hero-content > :nth-child(4) {
+      animation-delay: 0.26s;
+    }
+  }
+
+  @keyframes hero-intro {
+    from {
+      opacity: 0;
+      translate: 0 24px;
+    }
+  }
+
+  /*
+   * Desktop parallax: the photo drifts slower than the page and the copy eases
+   * back as the hero scrolls away. Pure CSS scroll timeline; browsers without
+   * it (Firefox today) simply get a still hero.
+   */
+  @supports (animation-timeline: scroll()) {
+    @media (min-width: 48rem) and (prefers-reduced-motion: no-preference) {
+      .hero > :global(picture) {
+        inset: -6% 0 0 0;
+        animation: hero-photo-drift linear both;
+      }
+      .hero-content {
+        animation: hero-copy-recede linear both;
+      }
+
+      /* Separate rules so the minifier cannot fold the timeline into the shorthand. */
+      :global(:where(html)) .hero > :global(picture),
+      :global(:where(html)) .hero-content {
+        animation-timeline: scroll(root);
+        animation-range: 0 100svh;
+      }
+    }
+  }
+
+  @keyframes hero-photo-drift {
+    to {
+      translate: 0 120px;
+    }
+  }
+
+  @keyframes hero-copy-recede {
+    to {
+      translate: 0 80px;
+      opacity: 0.15;
+    }
+  }
+</style>

@@ -1,0 +1,440 @@
+/*
+ * Miles For Smiles brand system.
+ * Palette and contrast notes match golfingforsmiles (src/app/globals.css) so both
+ * sites read as one family. Ratios are against #ffffff unless noted.
+ *   navy       12.92:1  text, headings, focus rings on light
+ *   navy-deep  16.99:1  hero, closing band, footer
+ *   green       3.87:1  icons and display numerals 24px+ ONLY, never body text
+ *   lime        1.77:1  never text on light. CTA fill (navy on lime 7.29:1),
+ *                       and text/accents on navy (7.29:1)
+ *   ink-muted   6.5:1   secondary copy
+ */
+
+@layer reset, tokens, base, layout, components, utilities;
+
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  body,
+  h1,
+  h2,
+  h3,
+  p,
+  figure,
+  blockquote,
+  ol,
+  ul {
+    margin: 0;
+  }
+  ol[class],
+  ul[class] {
+    list-style: none;
+    padding: 0;
+  }
+  img,
+  picture,
+  svg,
+  iframe {
+    display: block;
+    max-inline-size: 100%;
+  }
+  img {
+    block-size: auto;
+  }
+  button {
+    font: inherit;
+  }
+}
+
+@layer tokens {
+  :root {
+    color-scheme: light;
+
+    --brand-navy: #072e6e;
+    --brand-navy-deep: #041650;
+    --brand-blue: #0651ab;
+    --brand-green: #4c920f;
+    --brand-lime: #a9d130;
+    --brand-sky: #aee3f6;
+    --surface: #f3f7fb;
+    --tile: #e8eef8;
+    /* Pale lime, same as golfingforsmiles --accent. Backs green brand icons. */
+    --accent-tint: #edf6d9;
+    --ink: #10233f;
+    --ink-muted: #4d5f78;
+    --white: #ffffff;
+    --border: color-mix(in oklab, var(--brand-navy) 12%, white);
+    --on-dark-muted: rgb(255 255 255 / 0.82);
+    --on-dark-border: rgb(255 255 255 / 0.6);
+
+    --ring: var(--brand-navy);
+
+    --step--1: 0.9375rem;
+    --step-0: 1.125rem;
+    --step-1: 1.3125rem;
+    --step-2: clamp(1.75rem, 1.3rem + 1.6vw, 2.5rem);
+    --step-3: clamp(2rem, 1.4rem + 2.2vw, 2.875rem);
+    --step-4: clamp(2.75rem, 1.6rem + 4.4vw, 4.75rem);
+
+    --space-2xs: 0.5rem;
+    --space-xs: 0.75rem;
+    --space-s: 1rem;
+    --space-m: 1.5rem;
+    --space-l: 2rem;
+    --space-xl: 3rem;
+    --space-2xl: 4rem;
+    --space-section: clamp(4rem, 2.5rem + 6vw, 7rem);
+
+    --radius-control: 0.5rem;
+    --radius-card: 1rem;
+    --radius-media: 1.5rem;
+    --crown: 6px;
+
+    --shadow-media: 0 30px 80px rgb(4 22 80 / 0.18);
+    --shadow-float: 0 30px 80px rgb(4 22 80 / 0.45);
+    --shadow-cta: 0 12px 40px rgb(4 22 80 / 0.35);
+
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --duration: 200ms;
+
+    --header-h: 5rem;
+    --container: 72rem;
+    --gutter: clamp(1rem, 0.5rem + 2vw, 1.5rem);
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-block-start: calc(var(--header-h) + var(--space-s));
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: var(--step-0);
+    line-height: 1.65;
+    color: var(--ink);
+    background: var(--white);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    color: var(--brand-navy);
+    line-height: 1.12;
+    text-wrap: balance;
+  }
+
+  h1,
+  h2 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: var(--brand-navy);
+    text-underline-offset: 0.2em;
+    transition: color var(--duration) var(--ease-out);
+  }
+
+  a:hover {
+    color: var(--brand-navy-deep);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .on-dark {
+    --ring: var(--white);
+    color: var(--white);
+
+    & h1,
+    & h2,
+    & h3 {
+      color: var(--white);
+    }
+  }
+
+  address {
+    font-style: normal;
+  }
+}
+
+@layer layout {
+  .container {
+    inline-size: min(100% - 2 * var(--gutter), var(--container));
+    margin-inline: auto;
+  }
+
+  .section {
+    padding-block: var(--space-section);
+  }
+
+  .section--surface {
+    background: var(--surface);
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 28rem), 1fr));
+    gap: clamp(var(--space-xl), 4vw, var(--space-2xl));
+    align-items: center;
+  }
+
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+  }
+}
+
+@layer components {
+  .eyebrow {
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--brand-navy);
+  }
+
+  .on-dark .eyebrow {
+    color: var(--brand-lime);
+    letter-spacing: 0.16em;
+  }
+
+  .section-title {
+    font-size: var(--step-3);
+  }
+
+  .lede {
+    color: var(--ink-muted);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    min-block-size: 3.25rem;
+    padding-inline: 1.5rem;
+    border-radius: var(--radius-control);
+    border: 1px solid transparent;
+    font-size: 1.0625rem;
+    font-weight: 800;
+    line-height: 1.2;
+    text-decoration: none;
+    transition:
+      background-color var(--duration) var(--ease-out),
+      translate var(--duration) var(--ease-out),
+      border-color var(--duration) var(--ease-out);
+
+    & svg {
+      flex: none;
+      transition: translate var(--duration) var(--ease-out);
+    }
+
+    &:hover svg.icon-trailing {
+      translate: 2px 0;
+    }
+  }
+
+  .btn--primary {
+    background: var(--brand-lime);
+    color: var(--brand-navy);
+
+    &:hover {
+      color: var(--brand-navy);
+      background: color-mix(in oklab, var(--brand-lime) 88%, white);
+    }
+  }
+
+  .btn--elevated {
+    box-shadow: var(--shadow-cta);
+  }
+
+  .btn--ghost-dark {
+    color: var(--white);
+    border-color: var(--on-dark-border);
+    background: rgb(7 46 110 / 0.35);
+    font-weight: 700;
+
+    &:hover {
+      color: var(--white);
+      background: rgb(7 46 110 / 0.55);
+    }
+  }
+
+  .btn--navy {
+    background: var(--brand-navy);
+    color: var(--white);
+
+    &:hover {
+      color: var(--white);
+      background: var(--brand-navy-deep);
+    }
+  }
+
+  .btn--pill {
+    border-radius: 999px;
+    border-color: rgb(169 209 48 / 0.6);
+    color: var(--brand-lime);
+    font-size: 1rem;
+    font-weight: 700;
+    min-block-size: 3rem;
+
+    &:hover {
+      color: var(--brand-navy);
+      background: var(--brand-lime);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .btn--primary:hover,
+    .btn--ghost-dark:hover {
+      translate: 0 -2px;
+    }
+  }
+
+  .text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-block-size: 2.75rem;
+    font-weight: 800;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .on-dark .text-link {
+    color: var(--white);
+    padding-inline: 0.5rem;
+
+    &:hover {
+      color: var(--white);
+    }
+  }
+
+  /* Lime rule across the top of a card, echoing the flyer's banded sections. */
+  .crown {
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset-inline: 0;
+      inset-block-start: 0;
+      block-size: var(--crown);
+      background: var(--brand-lime);
+    }
+  }
+
+  /* Subtle diagonal texture used on navy bands. */
+  .texture {
+    position: relative;
+    isolation: isolate;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      opacity: 0.22;
+      pointer-events: none;
+      background-image: repeating-linear-gradient(
+        -12deg,
+        transparent,
+        transparent 28px,
+        rgb(255 255 255 / 0.06) 28px,
+        rgb(255 255 255 / 0.06) 29px
+      );
+    }
+  }
+
+  .script {
+    font-family: var(--font-script);
+    font-weight: 400;
+    font-size: 1.12em;
+    letter-spacing: 0;
+    color: var(--brand-lime);
+  }
+}
+
+@layer utilities {
+  .visually-hidden {
+    position: absolute !important;
+    inline-size: 1px;
+    block-size: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /*
+   * Scroll reveal, matching golfingforsmiles: a timed 0.7s rise rather than a
+   * scroll-scrubbed one, so it feels smooth at any scroll speed and works in
+   * every browser. Content is visible by default; it only starts hidden when
+   * JavaScript is running (html.js, set inline in the head) AND the visitor
+   * allows motion. reveal.ts flips data-reveal to "revealed" on entry.
+   * --reveal-delay staggers siblings.
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    html.js [data-reveal] {
+      opacity: 0;
+      translate: 0 24px;
+      transition:
+        opacity 0.7s var(--ease-out),
+        translate 0.7s var(--ease-out);
+      transition-delay: var(--reveal-delay, 0s);
+    }
+
+    html.js [data-reveal="revealed"] {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+
+  /* Staggered children: add .stagger to a grid whose items carry data-reveal. */
+  .stagger > :nth-child(2) {
+    --reveal-delay: 0.1s;
+  }
+  .stagger > :nth-child(3) {
+    --reveal-delay: 0.2s;
+  }
+  .stagger > :nth-child(4) {
+    --reveal-delay: 0.3s;
+  }
+  .stagger > :nth-child(n + 5) {
+    --reveal-delay: 0.4s;
+  }
+
+  /* Pairs in a split layout: the second column follows the first. */
+  .split > [data-reveal] + [data-reveal] {
+    --reveal-delay: 0.15s;
+  }
+}

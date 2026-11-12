@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Playwright's official image ships Chromium, WebKit and Firefox with every
+    # system library they need, so no browser install step is required. That
+    # step alone took over 10 minutes on a bare runner. Keep the tag in step
+    # with the @playwright/test version in package.json.
+    container:
+      image: mcr.microsoft.com/playwright:v1.65.0-noble
+    env:
+      # Firefox refuses to start as root unless HOME matches root's home.
+      HOME: /root
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run lint
+      - run: npm run check
+      - run: npm run build
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: playwright-report
+          path: test-results/
+          retention-days: 7

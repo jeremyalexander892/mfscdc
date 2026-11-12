@@ -1,0 +1,419 @@
+---
+import { Image } from "astro:assets";
+import { Menu, Phone, X } from "@lucide/astro";
+import logo from "../assets/images/logo-white.png";
+import { FLYERS } from "../content/flyers";
+import { CALLABLE_OFFICES, NAV } from "../content/site";
+
+// The Locations link previews the service-map flyer on hover/focus (desktop only).
+const PREVIEW_HREF = "#contact";
+---
+
+<header class="site-header on-dark">
+  <div class="container bar">
+    <a href="#top" class="brand">
+      <Image
+        src={logo}
+        densities={[1, 2]}
+        alt="Miles For Smiles Mobile Dental Care"
+        height={46}
+        loading="eager"
+        class="brand-logo"
+      />
+    </a>
+
+    <nav aria-label="Primary" class="nav-desktop">
+      <ul class="nav-list">
+        {NAV.map((item) => (
+          <li class:list={[item.href === PREVIEW_HREF && "has-preview"]}>
+            <a href={item.href}>
+              {item.label}
+              {item.href === PREVIEW_HREF && (
+                // Visual duplicate of the flyer in the Locations section, so hidden from
+                // assistive tech; clicking it follows the link there.
+                <span class="nav-preview" aria-hidden="true">
+                  <Image
+                    src={FLYERS.serviceMap.image}
+                    alt=""
+                    widths={[240, 480]}
+                    sizes="15rem"
+                    loading="lazy"
+                    class="nav-preview-img"
+                  />
+                  <span class="nav-preview-caption">{FLYERS.serviceMap.title}</span>
+                </span>
+              )}
+            </a>
+          </li>
+        ))}
+      </ul>
+      <a href="#contact" class="btn btn--primary nav-cta">
+        Request a consultation
+      </a>
+    </nav>
+
+    <button
+      class="menu-toggle"
+      type="button"
+      commandfor="site-menu"
+      command="show-modal"
+      aria-haspopup="dialog"
+      aria-controls="site-menu"
+    >
+      <Menu size={26} aria-hidden="true" />
+      <span class="visually-hidden">Open menu</span>
+    </button>
+  </div>
+</header>
+
+<dialog id="site-menu" class="menu on-dark" aria-label="Site menu">
+  <div class="menu-head">
+    <Image src={logo} densities={[1, 2]} alt="" height={34} class="brand-logo" />
+    <button class="menu-close" type="button" commandfor="site-menu" command="close">
+      <X size={26} aria-hidden="true" />
+      <span class="visually-hidden">Close menu</span>
+    </button>
+  </div>
+  <nav aria-label="Mobile">
+    <ul class="menu-links">
+      {NAV.map((item) => (
+        <li>
+          <a href={item.href}>{item.label}</a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+  <div class="menu-actions">
+    <a href="#contact" class="btn btn--primary">
+      Request a consultation
+    </a>
+    {CALLABLE_OFFICES.map((office) => (
+      <a href={office.phone.href} class="btn btn--ghost-dark">
+        <Phone size={18} aria-hidden="true" />
+        Call {office.shortName}
+      </a>
+    ))}
+  </div>
+</dialog>
+
+<script>
+  // Invoker commands (command/commandfor) open and close the dialog natively.
+  // This fallback covers browsers that predate them, and closes the menu when
+  // a link inside it is followed so the page can scroll to the section.
+  const menu = document.querySelector<HTMLDialogElement>("#site-menu");
+  const supportsCommands = "command" in HTMLButtonElement.prototype;
+
+  if (menu) {
+    if (!supportsCommands) {
+      document.querySelectorAll<HTMLButtonElement>("[commandfor='site-menu']").forEach((button) => {
+        button.addEventListener("click", () => {
+          if (button.getAttribute("command") === "close") {
+            menu.close();
+            return;
+          }
+          menu.showModal();
+        });
+      });
+    }
+
+    // Following a link closes the menu and lets the page move to that section.
+    let closedByLink = false;
+    menu.addEventListener("click", (event) => {
+      const target = event.target;
+      if (target instanceof Element && target.closest("a")) {
+        closedByLink = true;
+        menu.close();
+      }
+    });
+
+    // Any other dismissal (Escape, close button) returns focus to the toggle.
+    // Browsers only do this when the toggle had focus, and iOS Safari does not
+    // focus buttons on tap.
+    const toggle = document.querySelector<HTMLButtonElement>(".menu-toggle");
+    menu.addEventListener("close", () => {
+      if (!closedByLink) toggle?.focus();
+      closedByLink = false;
+    });
+  }
+
+  // Hover preview on the Locations link: Escape hides it without moving the pointer or
+  // focus (WCAG 1.4.13); it can show again once the pointer or focus leaves and returns.
+  document.querySelectorAll<HTMLElement>(".has-preview").forEach((item) => {
+    const reset = () => item.removeAttribute("data-dismissed");
+    item.addEventListener("pointerleave", reset);
+    item.addEventListener("focusout", reset);
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    document
+      .querySelectorAll<HTMLElement>(".has-preview:hover, .has-preview:focus-within")
+      .forEach((item) => item.setAttribute("data-dismissed", ""));
+  });
+</script>
+
+<style>
+  .site-header {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline: 0;
+    z-index: 40;
+    background-color: rgb(4 22 80 / 0.96);
+    box-shadow: 0 8px 30px rgb(4 22 80 / 0.25);
+  }
+
+  /*
+   * Transparent over the hero, solid navy once the page scrolls. Driven by the
+   * scroll position itself, so no JavaScript listener is needed. Browsers
+   * without scroll timelines keep the solid header.
+   */
+  @supports (animation-timeline: scroll()) {
+    .site-header {
+      background-color: transparent;
+      box-shadow: none;
+      animation: header-solid linear both;
+    }
+
+    /* Separate rule so the minifier cannot fold the timeline into the shorthand. */
+    :global(:where(html)) .site-header {
+      animation-timeline: scroll(root);
+      animation-range: 0 120px;
+    }
+  }
+
+  @keyframes header-solid {
+    to {
+      background-color: rgb(4 22 80 / 0.96);
+      box-shadow: 0 8px 30px rgb(4 22 80 / 0.25);
+    }
+  }
+
+  .bar {
+    min-block-size: var(--header-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-m);
+  }
+
+  .brand {
+    display: inline-flex;
+    flex: none;
+  }
+
+  .brand-logo {
+    inline-size: auto;
+    block-size: 2.875rem;
+  }
+
+  .nav-desktop {
+    display: none;
+    align-items: center;
+    gap: var(--space-l);
+
+    & ul {
+      display: flex;
+      gap: 1.75rem;
+    }
+
+    & ul a {
+      color: var(--white);
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      padding-block: 0.5rem;
+      background: linear-gradient(var(--brand-lime), var(--brand-lime)) no-repeat left bottom / 0
+        2px;
+      transition: background-size var(--duration) var(--ease-out);
+
+      &:hover {
+        background-size: 100% 2px;
+      }
+    }
+  }
+
+  .has-preview {
+    position: relative;
+  }
+
+  .nav-preview {
+    display: none;
+    position: absolute;
+    inset-block-start: calc(100% + 0.875rem);
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    z-index: 50;
+    inline-size: 15rem;
+    padding: 0.5rem;
+    border-radius: var(--radius-card);
+    background: var(--white);
+    box-shadow: 0 18px 44px rgb(4 22 80 / 0.35);
+    cursor: pointer;
+
+    /* Invisible bridge over the gap, so moving the pointer down onto the preview keeps it open. */
+    &::before {
+      content: "";
+      position: absolute;
+      inset-inline: 0;
+      inset-block-end: 100%;
+      block-size: 0.875rem;
+    }
+  }
+
+  .nav-preview :global(.nav-preview-img) {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    border-radius: 0.5rem;
+  }
+
+  .nav-preview-caption {
+    display: block;
+    padding: 0.5rem 0.25rem 0.125rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--brand-navy);
+    text-align: center;
+  }
+
+  /* Only where a real hover exists; touch screens use the flyer card in Locations. */
+  @media (hover: hover) and (pointer: fine) {
+    .has-preview:is(:hover, :focus-within):not([data-dismissed]) .nav-preview {
+      display: block;
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .nav-preview {
+      transition:
+        opacity var(--duration) var(--ease-out),
+        display var(--duration) allow-discrete;
+      opacity: 0;
+    }
+
+    .has-preview:is(:hover, :focus-within):not([data-dismissed]) .nav-preview {
+      opacity: 1;
+
+      @starting-style {
+        opacity: 0;
+      }
+    }
+  }
+
+  .nav-cta {
+    min-block-size: 2.875rem;
+    font-size: 1rem;
+    padding-inline: 1.25rem;
+  }
+
+  .menu-toggle,
+  .menu-close {
+    display: inline-grid;
+    place-items: center;
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    border: 0;
+    border-radius: var(--radius-control);
+    background: transparent;
+    color: var(--white);
+    cursor: pointer;
+
+    &:hover {
+      background: rgb(255 255 255 / 0.1);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .nav-desktop {
+      display: flex;
+    }
+
+    .menu-toggle {
+      display: none;
+    }
+  }
+
+  .menu {
+    inline-size: min(100%, 26rem);
+    max-inline-size: 100%;
+    block-size: 100dvh;
+    max-block-size: 100dvh;
+    margin: 0 0 0 auto;
+    padding: var(--space-m);
+    border: 0;
+    background: var(--brand-navy-deep);
+    display: none;
+    flex-direction: column;
+    gap: var(--space-xl);
+
+    &[open] {
+      display: flex;
+    }
+
+    &::backdrop {
+      background: rgb(4 22 80 / 0.6);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .menu,
+    .menu::backdrop {
+      transition:
+        translate 250ms var(--ease-out),
+        opacity 250ms var(--ease-out),
+        display 250ms allow-discrete,
+        overlay 250ms allow-discrete;
+    }
+
+    .menu {
+      translate: 100% 0;
+    }
+
+    .menu[open] {
+      translate: 0 0;
+
+      @starting-style {
+        translate: 100% 0;
+      }
+    }
+
+    .menu::backdrop {
+      opacity: 0;
+    }
+
+    .menu[open]::backdrop {
+      opacity: 1;
+
+      @starting-style {
+        opacity: 0;
+      }
+    }
+  }
+
+  .menu-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .menu-links {
+    display: flex;
+    flex-direction: column;
+
+    & a {
+      display: block;
+      padding-block: 0.875rem;
+      border-block-end: 1px solid rgb(255 255 255 / 0.12);
+      color: var(--white);
+      font-family: var(--font-display);
+      font-size: 1.625rem;
+      text-decoration: none;
+    }
+  }
+
+  .menu-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    margin-block-start: auto;
+  }
+</style>

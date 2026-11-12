@@ -1,0 +1,85 @@
+---
+import { ArrowRight } from "@lucide/astro";
+import { STATS } from "../content/site";
+---
+
+<section class="stat-band on-dark texture" aria-label="Capacity and experience">
+  <div class="container stat-row" data-reveal>
+    <p class="stat-primary">
+      <span class="stat-value">{STATS.primary.value}</span>
+      <span class="stat-label">
+        {STATS.primary.label} <span class="stat-aside">{STATS.primary.aside}</span>
+      </span>
+    </p>
+    <p class="stat-secondary">
+      <span class="stat-value stat-value--sm">{STATS.secondary.value}</span>
+      <span class="stat-aside">{STATS.secondary.label}</span>
+    </p>
+    <a href="#contact" class="btn btn--pill">
+      Plan a visit
+      <ArrowRight size={16} aria-hidden="true" class="icon-trailing" />
+    </a>
+  </div>
+</section>
+
+<style>
+  .stat-band {
+    background: var(--brand-navy);
+    padding-block: var(--space-2xl);
+  }
+
+  .stat-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xl);
+  }
+
+  .stat-primary {
+    flex: 1 1 30rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  .stat-secondary {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    padding-inline-start: var(--space-xl);
+    border-inline-start: 1px solid rgb(255 255 255 / 0.18);
+  }
+
+  .stat-value {
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 2.5rem + 3.5vw, 5rem);
+    line-height: 1;
+    color: var(--brand-lime);
+  }
+
+  .stat-value--sm {
+    font-size: clamp(2.25rem, 1.8rem + 1.6vw, 3rem);
+    color: var(--white);
+  }
+
+  .stat-label {
+    font-size: var(--step-1);
+    line-height: 1.5;
+  }
+
+  .stat-aside {
+    color: var(--on-dark-muted);
+    font-size: 1rem;
+  }
+
+  .stat-label .stat-aside {
+    font-size: inherit;
+  }
+
+  @media (max-width: 40rem) {
+    .stat-secondary {
+      padding-inline-start: 0;
+      border-inline-start: 0;
+    }
+  }
+</style>

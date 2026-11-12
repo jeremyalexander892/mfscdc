@@ -1,0 +1,288 @@
+---
+import { Image } from "astro:assets";
+import { Play } from "@lucide/astro";
+import poster from "../assets/images/team-portrait.jpeg";
+
+interface Props {
+  /** Same-origin 1080p MP4 (H.264/AAC, faststart) for wide screens. */
+  src: string;
+  /** Same-origin 720p MP4 for phones, tablets, laptops and constrained connections; also the
+   * download offered when playback fails (smaller, since failures skew to weak connections). */
+  srcSd: string;
+  /** Same-origin English WebVTT captions. */
+  captions: string;
+  /** Size of the 720p download, e.g. "MP4, 17 MB". */
+  sizeLabel: string;
+  title: string;
+}
+
+const { src, srcSd, captions, sizeLabel, title } = Astro.props;
+---
+
+<div
+  class="video"
+  data-video-src={src}
+  data-video-src-sd={srcSd}
+  data-video-captions={captions}
+  data-video-title={title}
+  data-reveal
+>
+  <button type="button" class="poster" aria-label={`Play video: ${title}`}>
+    <Image
+      src={poster}
+      alt=""
+      widths={[400, 560, 720, 960, 1120]}
+      sizes="(min-width: 75rem) 34.5rem, (min-width: 64rem) calc(50vw - 3rem), calc(100vw - 2rem)"
+      class="poster-img"
+    />
+    <span class="poster-scrim" aria-hidden="true"></span>
+    <span class="play" aria-hidden="true">
+      <Play size={30} fill="currentColor" stroke-width={0} class="play-icon" />
+      <span class="spinner"></span>
+    </span>
+  </button>
+  {/* The live region is always present (empty) so the message is announced when it appears. */}
+  <p class="fallback" role="status">
+    <span class="fallback-message" hidden>
+      <strong>The video couldn't load.</strong>{" "}
+      <a href={srcSd} download>
+        Download the video ({sizeLabel})
+      </a>
+    </span>
+  </p>
+</div>
+
+<script>
+  // Nothing is requested on page load. Hovering or focusing the play button warms up the start
+  // of the file (unless the visitor asked to save data); clicking plays it.
+  // Network Information API: Chromium only. Elsewhere these checks are simply skipped.
+  type Connection = { saveData?: boolean; effectiveType?: string };
+  const connection = (navigator as Navigator & { connection?: Connection }).connection;
+  const saveData = connection?.saveData === true;
+  const slowNetwork = ["slow-2g", "2g", "3g"].includes(connection?.effectiveType ?? "");
+  // The inline player is at most ~34rem wide, so 720p is sharp there; 1080p only pays off on
+  // wide screens with a good connection (e.g. fullscreen on a desktop).
+  const WIDE_SCREEN = "(min-width: 80rem)";
+
+  document.querySelectorAll<HTMLElement>(".video[data-video-src]").forEach((root) => {
+    const button = root.querySelector<HTMLButtonElement>(".poster");
+    const { videoSrc, videoSrcSd, videoCaptions, videoTitle } = root.dataset;
+    if (!button || !videoSrc) return;
+    let video: HTMLVideoElement | null = null;
+
+    const pickSource = () => {
+      const wantsHd = matchMedia(WIDE_SCREEN).matches && !saveData && !slowNetwork;
+      return wantsHd || !videoSrcSd ? videoSrc : videoSrcSd;
+    };
+
+    const reveal = (player: HTMLVideoElement) => {
+      if (root.dataset["state"] === "playing") return;
+      root.dataset["state"] = "playing";
+      player.inert = false;
+      button.remove();
+      player.focus();
+    };
+
+    const fail = () => {
+      root.dataset["state"] = "error";
+      root.querySelector<HTMLElement>(".fallback-message")?.removeAttribute("hidden");
+      video?.remove();
+      button.removeAttribute("aria-busy");
+      button.disabled = true;
+    };
+
+    const addCaptions = (player: HTMLVideoElement, src: string) => {
+      const track = document.createElement("track");
+      track.kind = "captions";
+      track.srclang = "en";
+      track.label = "English";
+      track.src = src;
+      // Off by default: viewers turn captions on from the player's CC control. Browsers that
+      // honor a system-wide captions preference (e.g. Safari) still switch them on automatically.
+      player.append(track);
+    };
+
+    // Builds the player once, hidden under the poster and inert (no tab stop, not announced)
+    // until it actually plays.
+    const ensureVideo = (preload: "metadata" | "auto") => {
+      if (video) {
+        video.preload = preload;
+        return video;
+      }
+      const player = document.createElement("video");
+      player.className = "player";
+      player.controls = true;
+      player.playsInline = true;
+      player.preload = preload;
+      player.inert = true;
+      player.setAttribute("aria-label", videoTitle ?? "Video");
+
+      const source = document.createElement("source");
+      source.src = pickSource();
+      source.type = "video/mp4";
+      // A failed <source> fires "error" on the source element, not the video.
+      source.addEventListener("error", fail);
+      player.append(source);
+      if (videoCaptions) addCaptions(player, videoCaptions);
+
+      player.addEventListener("playing", () => reveal(player), { once: true });
+      root.prepend(player);
+      video = player;
+      return player;
+    };
+
+    // Intent to play: fetch just the index and first frames so the click starts almost at once.
+    const warmUp = () => {
+      if (saveData || root.dataset["state"]) return;
+      ensureVideo("metadata");
+    };
+    button.addEventListener("pointerenter", warmUp, { once: true });
+    button.addEventListener("focus", warmUp, { once: true });
+
+    button.addEventListener(
+      "click",
+      () => {
+        root.dataset["state"] = "loading";
+        button.setAttribute("aria-busy", "true");
+        const player = ensureVideo("auto");
+        // The click is a user gesture, so playback with sound is allowed. If the browser still
+        // refuses (e.g. iOS Low Power Mode), show the player so its own controls can start it.
+        player.play().catch((err: unknown) => {
+          const blocked = err instanceof DOMException && err.name === "NotAllowedError";
+          if (blocked) reveal(player);
+          else fail();
+        });
+      },
+      { once: true },
+    );
+  });
+</script>
+
+<style>
+  .video {
+    position: relative;
+    display: grid;
+  }
+
+  .poster,
+  .video :global(.player) {
+    grid-area: 1 / 1;
+    inline-size: 100%;
+    aspect-ratio: 16 / 10;
+    border: 0;
+    border-radius: var(--radius-media);
+    box-shadow: var(--shadow-media);
+  }
+
+  /* The film is 16:9; letterbox it inside the 16:10 frame so the layout never shifts. */
+  .video :global(video.player) {
+    block-size: auto;
+    object-fit: contain;
+    background: var(--brand-navy-deep);
+  }
+
+  .video :global(video.player:focus-visible) {
+    outline: 3px solid var(--brand-lime);
+    outline-offset: 3px;
+  }
+
+  .poster {
+    position: relative;
+    padding: 0;
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--brand-navy-deep);
+  }
+
+  .poster-img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .poster-scrim {
+    position: absolute;
+    inset: 0;
+    background: rgb(4 22 80 / 0.25);
+    transition: background-color var(--duration) var(--ease-out);
+  }
+
+  .poster:hover .poster-scrim {
+    background: rgb(4 22 80 / 0.15);
+  }
+
+  .play {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    translate: -50% -50%;
+    inline-size: 5rem;
+    block-size: 5rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--brand-lime);
+    color: var(--brand-navy);
+    box-shadow: var(--shadow-cta);
+    transition: scale var(--duration) var(--ease-out);
+  }
+
+  .play :global(.play-icon) {
+    translate: 2px 0;
+  }
+
+  .poster:hover .play {
+    scale: 1.06;
+  }
+
+  .spinner {
+    display: none;
+    inline-size: 2rem;
+    block-size: 2rem;
+    border-radius: 50%;
+    border: 3px solid rgb(7 46 110 / 0.25);
+    border-block-start-color: var(--brand-navy);
+  }
+
+  .video[data-state="loading"] .play :global(.play-icon) {
+    display: none;
+  }
+
+  .video[data-state="loading"] .spinner {
+    display: block;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .video[data-state="loading"] .spinner {
+      animation-duration: 2.4s;
+    }
+  }
+
+  @keyframes spin {
+    to {
+      rotate: 1turn;
+    }
+  }
+
+  /* Empty (zero height, no gap) until playback fails. */
+  .fallback {
+    font-size: var(--step--1);
+    color: var(--ink-muted);
+  }
+
+  .video[data-state="error"] .fallback {
+    padding-block-start: var(--space-xs);
+  }
+
+  .fallback strong {
+    color: var(--ink);
+  }
+
+  .video[data-state="error"] .play {
+    display: none;
+  }
+
+  .poster:disabled {
+    cursor: default;
+  }
+</style>

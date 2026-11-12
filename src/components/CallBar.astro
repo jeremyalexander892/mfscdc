@@ -1,0 +1,55 @@
+---
+import { Phone } from "@lucide/astro";
+import { CALLABLE_OFFICES } from "../content/site";
+
+// Two buttons stay readable on the narrowest phones; other numbers are in Locations.
+const barOffices = CALLABLE_OFFICES.filter((office) => office.inCallBar);
+---
+
+<nav class="call-bar on-dark" aria-label="Call an office">
+  {barOffices.map((office, i) => (
+    <a href={office.phone.href} class:list={["btn", i === 0 ? "btn--primary" : "btn--ghost-dark"]}>
+      <Phone size={18} aria-hidden="true" />
+      Call {office.shortName}
+    </a>
+  ))}
+</nav>
+
+<style>
+  /* Phone-only: keeps both offices one tap away while scrolling. */
+  .call-bar {
+    position: fixed;
+    inset-inline: 0;
+    inset-block-end: 0;
+    z-index: 30;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.625rem;
+    padding: 0.75rem var(--gutter) calc(0.75rem + env(safe-area-inset-bottom));
+    background: var(--brand-navy-deep);
+    box-shadow: 0 -8px 30px rgb(4 22 80 / 0.25);
+
+    & :global(.btn) {
+      min-block-size: 3rem;
+      padding-inline: 0.75rem;
+      font-size: 0.9375rem;
+    }
+  }
+
+  @media (min-width: 48rem) {
+    .call-bar {
+      display: none;
+    }
+  }
+
+  /* Reserve room so the bar never covers the footer or a focused element (WCAG 2.4.11). */
+  @media (max-width: 47.99rem) {
+    :global(body):has(.call-bar) {
+      padding-block-end: 4.75rem;
+    }
+
+    :global(html):has(.call-bar) {
+      scroll-padding-block-end: 5rem;
+    }
+  }
+</style>

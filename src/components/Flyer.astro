@@ -1,0 +1,264 @@
+---
+/**
+ * A flyer shown as a labeled thumbnail card that opens the full flyer in a modal dialog.
+ * Works by tap, click and keyboard; the full-size image only loads once the dialog opens.
+ */
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+import { Maximize2, X } from "@lucide/astro";
+
+interface Props {
+  /** Unique id; also names the dialog. */
+  id: string;
+  image: ImageMetadata;
+  /** Visible name of the flyer, e.g. "Where we've provided care". */
+  title: string;
+  /** Small label above the title, e.g. "Flyer · Louisiana service map". */
+  kicker: string;
+  /** Text alternative describing what the flyer shows and says. */
+  description: string;
+}
+
+const { id, image, title, kicker, description } = Astro.props;
+const dialogId = `flyer-${id}`;
+const titleId = `${dialogId}-title`;
+---
+
+<button
+  type="button"
+  class="flyer-card"
+  commandfor={dialogId}
+  command="show-modal"
+  aria-haspopup="dialog"
+>
+  <Image src={image} alt="" widths={[120, 240, 360]} sizes="7.5rem" class="flyer-thumb" />
+  <span class="flyer-text">
+    <span class="flyer-kicker">{kicker}</span>
+    <span class="flyer-title">{title}</span>
+    <span class="flyer-cta">
+      <Maximize2 size={16} aria-hidden="true" />
+      View flyer
+    </span>
+  </span>
+</button>
+
+<dialog id={dialogId} class="flyer-dialog" aria-labelledby={titleId}>
+  <div class="flyer-dialog-head">
+    <h2 id={titleId}>{title}</h2>
+    <button type="button" class="flyer-close" commandfor={dialogId} command="close">
+      <X size={24} aria-hidden="true" />
+      <span class="visually-hidden">Close flyer</span>
+    </button>
+  </div>
+  <Image
+    src={image}
+    alt={description}
+    widths={[480, 720, 960, 1280, 1600]}
+    sizes="min(92vw, 44rem)"
+    loading="lazy"
+    class="flyer-full"
+  />
+</dialog>
+
+<script>
+  // Invoker commands (command/commandfor) open and close the dialog natively; this covers
+  // browsers that predate them. Clicking the dimmed backdrop also closes the flyer.
+  const supportsCommands = "command" in HTMLButtonElement.prototype;
+
+  document.querySelectorAll<HTMLDialogElement>("dialog.flyer-dialog").forEach((dialog) => {
+    const buttons = document.querySelectorAll<HTMLButtonElement>(`[commandfor="${dialog.id}"]`);
+    if (!supportsCommands) {
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => {
+          if (button.getAttribute("command") === "close") dialog.close();
+          else dialog.showModal();
+        });
+      });
+    }
+
+    // A click whose target is the <dialog> itself landed on the backdrop, outside the content.
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+
+    // Return focus to the card that opened it (iOS Safari does not focus buttons on tap).
+    const opener = [...buttons].find((b) => b.getAttribute("command") === "show-modal");
+    dialog.addEventListener("close", () => opener?.focus());
+  });
+</script>
+
+<style>
+  .flyer-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+    inline-size: 100%;
+    max-inline-size: 30rem;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    background: var(--white);
+    color: var(--ink);
+    text-align: start;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgb(4 22 80 / 0.08);
+    transition:
+      box-shadow var(--duration) var(--ease-out),
+      translate var(--duration) var(--ease-out);
+
+    &:hover {
+      box-shadow: 0 10px 28px rgb(4 22 80 / 0.16);
+      translate: 0 -2px;
+    }
+
+    &:focus-visible {
+      outline: 3px solid var(--brand-lime);
+      outline-offset: 3px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flyer-card:hover {
+      translate: none;
+    }
+  }
+
+  .flyer-card :global(.flyer-thumb) {
+    flex: none;
+    inline-size: 5.5rem;
+    block-size: auto;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgb(4 22 80 / 0.18);
+  }
+
+  .flyer-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .flyer-kicker {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    /* Matches the site's eyebrow labels; brand green is under 4.5:1 on white at this size. */
+    color: var(--brand-navy);
+  }
+
+  .flyer-title {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    line-height: 1.2;
+    color: var(--brand-navy);
+  }
+
+  .flyer-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-weight: 700;
+    color: var(--brand-navy);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .flyer-dialog {
+    inline-size: min(92vw, 46rem);
+    max-block-size: 94dvh;
+    padding: var(--space-s);
+    border: 0;
+    border-radius: var(--radius-card);
+    background: var(--white);
+    box-shadow: 0 24px 60px rgb(4 22 80 / 0.35);
+
+    &::backdrop {
+      background: rgb(4 22 80 / 0.7);
+    }
+
+    &[open] {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+  }
+
+  .flyer-dialog-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-s);
+
+    & h2 {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: 1.375rem;
+      color: var(--brand-navy);
+    }
+  }
+
+  .flyer-close {
+    flex: none;
+    display: inline-grid;
+    place-items: center;
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    border: 0;
+    border-radius: var(--radius-control);
+    background: transparent;
+    color: var(--brand-navy);
+    cursor: pointer;
+
+    &:hover {
+      background: rgb(4 22 80 / 0.08);
+    }
+  }
+
+  /* Fit the whole flyer on screen: as wide as the dialog, never taller than the viewport. */
+  .flyer-dialog :global(.flyer-full) {
+    inline-size: 100%;
+    block-size: auto;
+    max-block-size: calc(94dvh - 5rem);
+    object-fit: contain;
+    min-block-size: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .flyer-dialog,
+    .flyer-dialog::backdrop {
+      transition:
+        opacity 200ms var(--ease-out),
+        display 200ms allow-discrete,
+        overlay 200ms allow-discrete;
+      opacity: 0;
+    }
+
+    .flyer-dialog {
+      scale: 0.97;
+      transition:
+        opacity 200ms var(--ease-out),
+        scale 200ms var(--ease-out),
+        display 200ms allow-discrete,
+        overlay 200ms allow-discrete;
+    }
+
+    .flyer-dialog[open] {
+      opacity: 1;
+      scale: 1;
+
+      @starting-style {
+        opacity: 0;
+        scale: 0.97;
+      }
+    }
+
+    /* Fade only: a scaled backdrop would leave the screen edges uncovered (and unclickable). */
+    .flyer-dialog[open]::backdrop {
+      opacity: 1;
+
+      @starting-style {
+        opacity: 0;
+      }
+    }
+  }
+</style>

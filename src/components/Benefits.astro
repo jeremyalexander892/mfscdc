@@ -1,0 +1,85 @@
+---
+import { Image } from "astro:assets";
+import { Check } from "@lucide/astro";
+import insideUnit from "../assets/images/inside-unit.jpeg";
+
+const benefits = [
+  {
+    title: "Fewer transport and security risks.",
+    text: "Patients stay inside your secure facility instead of being transported to an outside clinic.",
+  },
+  {
+    title: "Funds you can reallocate.",
+    text: "Transportation budget and manpower return to your facility.",
+  },
+  {
+    title: "Any size facility.",
+    text: "From the smallest county facility to statewide and federal facilities.",
+  },
+  {
+    title: "Dignified care for every population.",
+    text: "Comprehensive, secure treatment for adults and juveniles, including emergencies.",
+  },
+];
+---
+
+<section id="benefits" class="section" aria-labelledby="benefits-title">
+  <div class="container split">
+    <div class="stack" data-reveal>
+      <p class="eyebrow">Why facilities choose us</p>
+      <h2 id="benefits-title" class="section-title">
+        Care stays inside your walls. So does your budget.
+      </h2>
+      <ul class="checklist stagger">
+        {benefits.map((b) => (
+          <li data-reveal>
+            <Check size={20} stroke-width={2.25} aria-hidden="true" class="check" />
+            <span>
+              <strong>{b.title}</strong> {b.text}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <Image
+      src={insideUnit}
+      alt="Inside the mobile dental unit, a patient waits while an officer is present"
+      widths={[400, 560, 720, 960, 1120]}
+      sizes="(min-width: 75rem) 34.5rem, (min-width: 64rem) calc(50vw - 3rem), calc(100vw - 2rem)"
+      class="media"
+      data-reveal
+    />
+  </div>
+</section>
+
+<style>
+  .checklist {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+
+    & li {
+      display: flex;
+      gap: 0.875rem;
+    }
+
+    & strong {
+      font-weight: 800;
+      color: var(--brand-navy);
+    }
+  }
+
+  .checklist :global(.check) {
+    flex: none;
+    margin-block-start: 0.25rem;
+    color: var(--brand-green);
+  }
+
+  .media {
+    inline-size: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius-media);
+    box-shadow: var(--shadow-media);
+  }
+</style>

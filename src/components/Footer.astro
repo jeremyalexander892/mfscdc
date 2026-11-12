@@ -1,0 +1,228 @@
+---
+import { Image } from "astro:assets";
+import { Clock, Mail, MapPin, Phone } from "@lucide/astro";
+import logo from "../assets/images/logo-white.png";
+import SocialIcon from "./SocialIcon.astro";
+import { AREA_SERVED_TEXT, OFFICES, SITE } from "../content/site";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer on-dark">
+  <div class="container grid">
+    <div class="brand">
+      <Image src={logo} densities={[1, 2]} alt="Miles For Smiles" height={40} class="logo" />
+      <p class="tagline">
+        {SITE.tagline} in {AREA_SERVED_TEXT}.
+      </p>
+    </div>
+
+    <div class="offices">
+      {OFFICES.map((office) => (
+        <section class="col" aria-labelledby={`footer-${office.id}`}>
+          <h2 id={`footer-${office.id}`} class="col-title">
+            {office.name}
+          </h2>
+          {office.phone && (
+            <a href={office.phone.href} class="phone">
+              <Phone size={18} aria-hidden="true" class="icon" />
+              {office.phone.display}
+            </a>
+          )}
+          {office.address && (
+            <address>
+              <MapPin size={18} aria-hidden="true" class="icon" />
+              <span>
+                {office.address.building && (
+                  <>
+                    {office.address.building}
+                    <br />
+                  </>
+                )}
+                {office.address.street}
+                <br />
+                {office.address.city}, {office.address.stateCode} {office.address.postalCode}
+              </span>
+            </address>
+          )}
+        </section>
+      ))}
+    </div>
+
+    <section class="col" aria-labelledby="footer-contact">
+      <h2 id="footer-contact" class="col-title">
+        Contact
+      </h2>
+      <a href={SITE.emailHref} class="line-link">
+        <Mail size={18} aria-hidden="true" class="icon" />
+        {SITE.email}
+      </a>
+      <p class="line">
+        <Clock size={18} aria-hidden="true" class="icon" />
+        {SITE.hours}
+      </p>
+      <ul class="social" aria-label="Social media">
+        {SITE.social.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              rel="noopener noreferrer"
+              target="_blank"
+              class="social-link"
+              title={item.label}
+            >
+              <SocialIcon network={item.network} />
+              <span class="visually-hidden">{item.label} (opens in a new tab)</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </div>
+
+  <div class="container bottom">
+    <p>
+      © {year} {SITE.legalName}. All rights reserved.
+    </p>
+    <p>Emergency and same-day services available.</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--brand-navy-deep);
+    border-block-start: 1px solid rgb(255 255 255 / 0.12);
+    color: var(--on-dark-muted);
+    font-size: var(--step--1);
+  }
+
+  .grid {
+    padding-block: var(--space-xl) var(--space-l);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    gap: var(--space-l) var(--space-xl);
+  }
+
+  /* Narrow screens: each location is its own column in the wrapping grid. */
+  .offices {
+    display: contents;
+  }
+
+  /* On wide screens the locations form a 2x2 block that sizes to its content, so
+     addresses keep their natural line breaks, and the brand column takes what is left. */
+  @media (min-width: 64rem) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      column-gap: clamp(var(--space-l), 4vw, 4rem);
+    }
+
+    .offices {
+      display: grid;
+      grid-template-columns: repeat(2, auto);
+      gap: var(--space-l) clamp(var(--space-l), 4vw, 4rem);
+    }
+  }
+
+  .brand {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+
+  .logo {
+    inline-size: auto;
+    block-size: 2.5rem;
+    align-self: start;
+  }
+
+  .tagline {
+    max-inline-size: 18rem;
+  }
+
+  .col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .col-title {
+    margin-block-end: 0.25rem;
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--brand-lime);
+  }
+
+  .footer :global(.icon) {
+    flex: none;
+    color: var(--brand-lime);
+  }
+
+  .phone,
+  .line-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-block-size: 2.75rem;
+    color: var(--white);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+
+    &:hover {
+      color: var(--white);
+      text-decoration: underline;
+    }
+  }
+
+  .phone {
+    font-size: 1.125rem;
+    font-weight: 800;
+  }
+
+  address,
+  .line {
+    display: flex;
+    gap: 0.5rem;
+
+    & :global(.icon) {
+      margin-block-start: 0.2rem;
+    }
+  }
+
+  .social {
+    display: flex;
+    gap: 0.75rem;
+    margin-block-start: 0.5rem;
+  }
+
+  .social-link {
+    display: inline-grid;
+    place-items: center;
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    border-radius: 50%;
+    border: 1px solid rgb(255 255 255 / 0.3);
+    color: var(--white);
+    transition:
+      background-color var(--duration) var(--ease-out),
+      border-color var(--duration) var(--ease-out),
+      color var(--duration) var(--ease-out);
+
+    &:hover {
+      background: var(--brand-lime);
+      border-color: var(--brand-lime);
+      color: var(--brand-navy);
+    }
+  }
+
+  .bottom {
+    padding-block: var(--space-m);
+    border-block-start: 1px solid rgb(255 255 255 / 0.12);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-2xs) var(--space-m);
+  }
+</style>
