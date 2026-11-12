@@ -2,7 +2,11 @@
 import { Image } from "astro:assets";
 import { Menu, Phone, X } from "@lucide/astro";
 import logo from "../assets/images/logo-white.png";
+import { FLYERS } from "../content/flyers";
 import { CALLABLE_OFFICES, NAV } from "../content/site";
+
+// The Locations link previews the service-map flyer on hover/focus (desktop only).
+const PREVIEW_HREF = "#contact";
 ---
 
 <header class="site-header on-dark">
@@ -21,8 +25,25 @@ import { CALLABLE_OFFICES, NAV } from "../content/site";
     <nav aria-label="Primary" class="nav-desktop">
       <ul class="nav-list">
         {NAV.map((item) => (
-          <li>
-            <a href={item.href}>{item.label}</a>
+          <li class:list={[item.href === PREVIEW_HREF && "has-preview"]}>
+            <a href={item.href}>
+              {item.label}
+              {item.href === PREVIEW_HREF && (
+                // Visual duplicate of the flyer in the Locations section, so hidden from
+                // assistive tech; clicking it follows the link there.
+                <span class="nav-preview" aria-hidden="true">
+                  <Image
+                    src={FLYERS.serviceMap.image}
+                    alt=""
+                    widths={[240, 480]}
+                    sizes="15rem"
+                    loading="lazy"
+                    class="nav-preview-img"
+                  />
+                  <span class="nav-preview-caption">{FLYERS.serviceMap.title}</span>
+                </span>
+              )}
+            </a>
           </li>
         ))}
       </ul>
@@ -114,6 +135,20 @@ import { CALLABLE_OFFICES, NAV } from "../content/site";
       closedByLink = false;
     });
   }
+
+  // Hover preview on the Locations link: Escape hides it without moving the pointer or
+  // focus (WCAG 1.4.13); it can show again once the pointer or focus leaves and returns.
+  document.querySelectorAll<HTMLElement>(".has-preview").forEach((item) => {
+    const reset = () => item.removeAttribute("data-dismissed");
+    item.addEventListener("pointerleave", reset);
+    item.addEventListener("focusout", reset);
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    document
+      .querySelectorAll<HTMLElement>(".has-preview:hover, .has-preview:focus-within")
+      .forEach((item) => item.setAttribute("data-dismissed", ""));
+  });
 </script>
 
 <style>
@@ -192,6 +227,74 @@ import { CALLABLE_OFFICES, NAV } from "../content/site";
 
       &:hover {
         background-size: 100% 2px;
+      }
+    }
+  }
+
+  .has-preview {
+    position: relative;
+  }
+
+  .nav-preview {
+    display: none;
+    position: absolute;
+    inset-block-start: calc(100% + 0.875rem);
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    z-index: 50;
+    inline-size: 15rem;
+    padding: 0.5rem;
+    border-radius: var(--radius-card);
+    background: var(--white);
+    box-shadow: 0 18px 44px rgb(4 22 80 / 0.35);
+    cursor: pointer;
+
+    /* Invisible bridge over the gap, so moving the pointer down onto the preview keeps it open. */
+    &::before {
+      content: "";
+      position: absolute;
+      inset-inline: 0;
+      inset-block-end: 100%;
+      block-size: 0.875rem;
+    }
+  }
+
+  .nav-preview :global(.nav-preview-img) {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    border-radius: 0.5rem;
+  }
+
+  .nav-preview-caption {
+    display: block;
+    padding: 0.5rem 0.25rem 0.125rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--brand-navy);
+    text-align: center;
+  }
+
+  /* Only where a real hover exists; touch screens use the flyer card in Locations. */
+  @media (hover: hover) and (pointer: fine) {
+    .has-preview:is(:hover, :focus-within):not([data-dismissed]) .nav-preview {
+      display: block;
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .nav-preview {
+      transition:
+        opacity var(--duration) var(--ease-out),
+        display var(--duration) allow-discrete;
+      opacity: 0;
+    }
+
+    .has-preview:is(:hover, :focus-within):not([data-dismissed]) .nav-preview {
+      opacity: 1;
+
+      @starting-style {
+        opacity: 0;
       }
     }
   }

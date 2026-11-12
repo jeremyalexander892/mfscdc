@@ -239,6 +239,81 @@ test.describe("home page", () => {
     await expect(page.locator("video")).toHaveCount(0);
   });
 
+  for (const flyer of [
+    { section: "#contact", title: "Where we've provided care", alt: /map of Louisiana/ },
+    { section: "#oral-health", title: "Oral health and systemic diseases", alt: /April 2024/ },
+  ]) {
+    test(`flyer "${flyer.title}" opens full size and closes`, async ({ page }) => {
+      const card = page
+        .locator(flyer.section)
+        .getByRole("button", { name: new RegExp(flyer.title) });
+      await card.scrollIntoViewIfNeeded();
+      await expect(card).toContainText("View flyer");
+
+      await card.click();
+      const dialog = page.getByRole("dialog", { name: flyer.title });
+      await expect(dialog).toBeVisible();
+      const full = dialog.getByRole("img", { name: flyer.alt });
+      await expect(full).toBeVisible();
+      await expect
+        .poll(() => full.evaluate((img: HTMLImageElement) => img.naturalWidth))
+        .toBeGreaterThan(0);
+
+      await page.keyboard.press("Escape");
+      await expect(dialog).toBeHidden();
+      await expect(card).toBeFocused();
+
+      // Close button and a click on the backdrop also close it.
+      await card.click();
+      await expect(dialog).toBeVisible();
+      await dialog.getByRole("button", { name: "Close flyer" }).click();
+      await expect(dialog).toBeHidden();
+      await card.click();
+      await expect(dialog).toBeVisible();
+      await page.mouse.click(5, 5);
+      await expect(dialog).toBeHidden();
+    });
+  }
+
+  test("flyer dialog has no detectable accessibility violations", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page
+      .locator("#contact")
+      .getByRole("button", { name: /Where we've provided care/ })
+      .click();
+    await expect(page.getByRole("dialog", { name: "Where we've provided care" })).toBeVisible();
+    const results = await new AxeBuilder({ page })
+      .include("#flyer-service-map")
+      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  });
+
+  test("Locations menu link previews the service map on hover", async ({ page, isMobile }) => {
+    test.skip(isMobile, "Hover previews are for mouse users; phones use the flyer card");
+    const nav = page.getByRole("navigation", { name: "Primary" });
+    test.skip(!(await nav.isVisible()), "Desktop navigation is hidden at this width");
+    const link = nav.getByRole("link", { name: "Locations" });
+    const preview = page.locator(".nav-preview");
+    await expect(preview).toBeHidden();
+
+    await link.hover();
+    await expect(preview).toBeVisible();
+    await expect(preview).toContainText("Where we've provided care");
+    // Moving onto the preview keeps it open, and clicking it goes to Locations.
+    await preview.hover();
+    await expect(preview).toBeVisible();
+
+    await page.keyboard.press("Escape");
+    await expect(preview).toBeHidden();
+
+    await page.mouse.move(0, 400);
+    await link.hover();
+    await expect(preview).toBeVisible();
+    await preview.click();
+    await expect(page).toHaveURL(/#contact$/);
+  });
+
   test("serves the captions file", async ({ request }) => {
     const res = await request.get("/video/miles-for-smiles.en.vtt");
     expect(res.status()).toBe(200);

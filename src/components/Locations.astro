@@ -1,5 +1,7 @@
 ---
 import { Mail, MapPin, Phone } from "@lucide/astro";
+import Flyer from "./Flyer.astro";
+import { FLYERS } from "../content/flyers";
 import { OFFICES, SITE } from "../content/site";
 ---
 
@@ -11,6 +13,7 @@ import { OFFICES, SITE } from "../content/site";
         Talk to the office nearest your facility
       </h2>
       <p class="lede">{SITE.hours}. Emergency and same-day services available.</p>
+      <Flyer {...FLYERS.serviceMap} />
     </header>
 
     <div class="grid stagger">

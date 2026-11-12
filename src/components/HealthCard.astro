@@ -1,5 +1,7 @@
 ---
 import { ArrowRight } from "@lucide/astro";
+import Flyer from "./Flyer.astro";
+import { FLYERS } from "../content/flyers";
 import { TESTIMONIAL } from "../content/site";
 ---
 
@@ -25,6 +27,7 @@ import { TESTIMONIAL } from "../content/site";
           Talk to us about equitable access
           <ArrowRight size={18} aria-hidden="true" />
         </a>
+        <Flyer {...FLYERS.systemicDiseases} />
       </div>
       <figure class="quote">
         <span class="quote-mark" aria-hidden="true">
